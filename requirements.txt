@@ -1,4 +1,5 @@
 pandas
+numpy
 requests
 beautifulsoup4
 setuptools

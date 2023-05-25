@@ -3,6 +3,7 @@ from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
 
+
 def removeDuplicates(df: pd.DataFrame) -> pd.DataFrame:
     """
     Remove duplicate rows from a DataFrame based on selected columns.
@@ -18,10 +19,11 @@ def removeDuplicates(df: pd.DataFrame) -> pd.DataFrame:
     duplicate_idx = df[df.duplicated(subset=col)].index
     df.drop(duplicate_idx, axis=0, inplace=True)
     df.reset_index(drop=True, inplace=True)
-    
+
     df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
     df['Artist Names'] = df['Artist Names'].apply(lambda value: literal_eval(value))
     return df
+
 
 def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -33,6 +35,7 @@ def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pandas.DataFrame: The DataFrame with TF-IDF features.
     """
+
     def custom_tokenizer(text: str) -> list:
         return text.split(', ')
 
@@ -42,6 +45,7 @@ def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
     genre_df.columns = ['Genre' + " | " + i for i in tfidf.get_feature_names_out()]
     genre_df.drop(columns='Genre | ', inplace=True)
     return genre_df
+
 
 def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:
     """
@@ -59,6 +63,7 @@ def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:
     feature_names = ohe_col.columns
     ohe_col.columns = [new_name + " | " + str(i) for i in feature_names]
     return ohe_col
+
 
 def Standardize_Features(df: pd.DataFrame, columns: list) -> pd.DataFrame:
     """

@@ -2,6 +2,8 @@ import pandas as pd
 from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
+import warnings
+warnings.filterwarnings("ignore")
 
 
 def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
@@ -14,8 +16,12 @@ def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Orignal DataFrame with extra column 'Song-Artist' combined of 'Artist Names' and 'Song'.
     """
-    df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
-    df['Artist Names'] = df['Artist Names'].apply(lambda value: literal_eval(value))
+    try:
+        df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
+        df['Artist Names'] = df['Artist Names'].apply(lambda value: literal_eval(value))
+    except:
+        df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: np.nan)
+        df['Artist Names'] = df['Artist Names'].apply(lambda value: np.nan)
 
     df['Song-Artist'] = df['Song'] + ' - ' + df['Artist Names'].apply(lambda artist: ', '.join(artist))
     return df
@@ -33,7 +39,9 @@ def removeDuplicates(df: pd.DataFrame) -> pd.DataFrame:
     """
     duplicate_idx = df[df.duplicated(subset=['Song-Artist'])].index
     df.drop(duplicate_idx, axis=0, inplace=True)
-    df.dropna(subset = col, inplace = True)
+    df.dropna(subset = ['Song', 'Acousticness', 'Danceability', 'Energy',
+       'Instrumentalness', 'Liveness', 'Loudness', 'Speechiness', 'Tempo',
+       'Valence', 'Key', 'Mode', 'Time Signature', 'Popularity'], inplace = True)
     df.reset_index(drop=True, inplace=True)
     return df
 

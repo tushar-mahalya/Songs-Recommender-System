@@ -4,24 +4,37 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
 
 
+def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Combines the song and artist names into a single column with a hyphen separator.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame with columns 'Song' and 'Artist Names'.
+
+    Returns:
+        pd.DataFrame: Orignal DataFrame with extra column 'Song-Artist' combined of 'Artist Names' and 'Song'.
+    """
+    df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
+    df['Artist Names'] = df['Artist Names'].apply(lambda value: literal_eval(value))
+
+    df['Song-Artist'] = df['Song'] + ' - ' + df['Artist Names'].apply(lambda artist: ', '.join(artist))
+    return df
+
+
 def removeDuplicates(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Remove duplicate rows from a DataFrame based on selected columns.
+    Remove duplicate rows from a DataFrame based on 'Song-Artist' columns.
 
     Args:
         df (pandas.DataFrame): The input DataFrame.
 
     Returns:
-        pandas.DataFrame: The DataFrame with duplicate rows removed.
+        pandas.DataFrame: Orignal DataFrame without duplicate rows and NaN values.
     """
-    col = ['Song', 'Energy', 'Artist Names', 'Instrumentalness', 'Liveness',
-           'Spotify Link', 'Loudness', 'Speechiness', 'Tempo', 'Valence']
-    duplicate_idx = df[df.duplicated(subset=col)].index
+    duplicate_idx = df[df.duplicated(subset=['Song-Artist'])].index
     df.drop(duplicate_idx, axis=0, inplace=True)
+    df.dropna(subset = col, inplace = True)
     df.reset_index(drop=True, inplace=True)
-
-    df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
-    df['Artist Names'] = df['Artist Names'].apply(lambda value: literal_eval(value))
     return df
 
 
@@ -33,7 +46,7 @@ def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
         df (pandas.DataFrame): The input DataFrame.
 
     Returns:
-        pandas.DataFrame: The DataFrame with TF-IDF features.
+        pandas.DataFrame: New DataFrame with TF-IDF features.
     """
 
     def custom_tokenizer(text: str) -> list:
@@ -57,7 +70,7 @@ def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:
         new_name (str): The prefix for the new column names.
 
     Returns:
-        pandas.DataFrame: The DataFrame with one-hot encoded column.
+        pandas.DataFrame: New DataFrame with one-hot encoded column.
     """
     ohe_col = pd.get_dummies(df[column], dtype=int)
     feature_names = ohe_col.columns
@@ -74,7 +87,7 @@ def Standardize_Features(df: pd.DataFrame, columns: list) -> pd.DataFrame:
         columns (list): The list of column names to be standardized.
 
     Returns:
-        pandas.DataFrame: The DataFrame with standardized features.
+        pandas.DataFrame: New DataFrame with standardized features.
     """
     num_df = df[columns]
     scaler = MinMaxScaler()

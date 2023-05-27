@@ -8,4 +8,4 @@ from dataclasses import dataclass
 
 @dataclass
 class DataIngestionConfig:
-    data_path: str = '/data/[Spotify]_Billboard_Hot100_Songs_1946-2022.csv.csv'
+    data_path: str = '/data/[Spotify]_Billboard_Hot100_Songs_1946-2022.csv'

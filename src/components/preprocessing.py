@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MultiLabelBinarizer
 
 warnings.filterwarnings("ignore")
 
@@ -85,6 +86,29 @@ def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
     genre_df.columns = ['Genre' + " | " + i for i in tfidf.get_feature_names_out()]
     genre_df.drop(columns='Genre | ', inplace=True)
     return genre_df
+
+
+def OHE_List(df: pd.DataFrame, col: str, col_name: str) -> pd.DataFrame:
+    """
+    One-hot encode a column with list values in a DataFrame.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+        col (str): The column name containing the list values to be one-hot encoded.
+        col_name (str): The desired prefix for the resulting one-hot encoded columns.
+
+    Returns:
+        pd.DataFrame: The DataFrame with the specified column one-hot encoded.
+        
+    """
+    mlb = MultiLabelBinarizer(sparse_output=True)
+
+    ohe_df = pd.DataFrame.sparse.from_spmatrix(
+                    mlb.fit_transform(df.pop(col)),
+                    index=df.index,
+                    columns=[col_name + ' | ' + cls for cls in mlb.classes_])
+    return ohe_df
+
 
 
 def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:

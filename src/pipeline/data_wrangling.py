@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from dataclasses import dataclass
 
-from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre
+from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre, OHE_List
 from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features, getArtistGenre
 from src.components.sentiment import Sentiment_Features
 
@@ -53,6 +53,11 @@ class DataPreprocessing:
             songs_data, feats_data = self.data_preprocessing(self._data)
             songs_data.to_csv('artifacts/[Songs]_Preprocessed_Data.csv', index=False)
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
+            songs_data = formatToList(songs_data)
+            ohe_artist = OHE_List(songs_data, 'Artist Names', 'Artist')
+            ohe_genre = OHE_List(songs_data, 'Artist(s) Genre', 'Genre')
+            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
+            ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
             artists, genres = getArtistGenre(songs_data)
             artists_and_genres = {'Artist': artists, 'Genre': genres}
             with open('artifacts/Artists_and_Genres.json', 'w') as file:

@@ -104,11 +104,10 @@ def OHE_List(df: pd.DataFrame, col: str, col_name: str) -> pd.DataFrame:
     mlb = MultiLabelBinarizer(sparse_output=True)
 
     ohe_df = pd.DataFrame.sparse.from_spmatrix(
-                    mlb.fit_transform(df.pop(col)),
-                    index=df.index,
-                    columns=[col_name + ' | ' + cls for cls in mlb.classes_])
+        mlb.fit_transform(df.pop(col)),
+        index=df.index,
+        columns=[col_name + ' | ' + cls for cls in mlb.classes_])
     return ohe_df
-
 
 
 def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:

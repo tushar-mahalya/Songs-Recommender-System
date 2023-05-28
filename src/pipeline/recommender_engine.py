@@ -5,9 +5,7 @@ import sys
 import json
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.components.preprocessing import combineSongArtist, removeDuplicates
-from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features
-from src.components.sentiment import Sentiment_Features
+
 
 from src.exception import CustomException
 from src.logger import logging
@@ -15,42 +13,19 @@ from src.logger import logging
 from dataclasses import dataclass
 
 @dataclass
-class DataIngestionConfig:
-    data_path: str = 'data/[Spotify]_Billboard_Hot100_Songs_1946-2022.csv'
+class RecommenderEngineConfig:
+    prep_songs_data_path: str = 'artifacts/[Songs]_Preprocessed_Data.csv'
+    prep_feats_data_path: str = 'artifacts/[Features]_Preprocessed_Data.csv'
     
     
 class RecommenderEngine():
     
     def __init__(self):
-        config = DataIngestionConfig()
-        self.data = pd.read_csv(config.data_path)
-        
-        
-    def data_preprocessing(self, data_df: pd.DataFrame):
-        
-        prep_df = combineSongArtist(data_df)
-    
-        prep_df = removeDuplicates(prep_df)
+        config = RecommenderEngineConfig()
+        self._songs_data = pd.read_csv(config.prep_songs_data_path)
+        self._features_data = pd.read_csv(config.prep_feats_data_path)
+        logging.info('Preprocessed Songs & Features data read Successfully.')
 
-        genre_df = TFIDF_Features(prep_df)
-
-        subject_df, polar_df = Sentiment_Features(prep_df, 'Song')
-
-        key_ohe = OHE_Column(prep_df, 'Key', 'Key') * 0.5
-        mode_ohe = OHE_Column(prep_df, 'Mode', 'Mode') * 0.5
-        time_sig_ohe = OHE_Column(prep_df, 'Time Signature', 'Time Signature') * 0.5
-        subject_ohe = OHE_Column(subject_df, 'subjectivity', 'Subjectivity') * 0.5
-        polar_ohe = OHE_Column(polar_df, 'polarity', 'Polarity') * 0.5
-
-        num_feats = ['Popularity', 'Acousticness', 'Danceability', 'Energy', 'Instrumentalness',
-                     'Liveness', 'Loudness', 'Speechiness','Tempo', 'Valence']
-        scaled_feats = Standardize_Features(prep_df, num_feats)
-
-        final_df = pd.concat([genre_df, subject_ohe, polar_ohe, key_ohe, mode_ohe,
-                              time_sig_ohe, scaled_feats], axis = 1)
-        
-        return final_df
-    
     
     def getIndex(self, song_list: list, data_df: pd.DataFrame):
         index = data_df[data_df['Song-Artist'].isin(song_list)].index
@@ -74,9 +49,11 @@ class RecommenderEngine():
         return similarity_df
     
     
+    def Recommend_Songs(self, song_list_playlist: list) -> pd.DataFrame:
         
-    
-if __name__ == '__main__':
-    config = DataIngestionConfig()
-    data = pd.read_csv(config.data_path)
-    print('Data Read')
+        song_list_playlist_idx = self.getIndex(song_list_playlist, self._songs_data)
+        clean_feats_df = self.removeIndexfromDF(song_list_playlist_idx, self._features_data)
+        playlist_summary_arr = self.songSummarizationVector(song_list_playlist_idx, self._features_data)
+        similarity_df = self.getSimilarityDF(clean_feats_df, playlist_summary_arr)
+        recommendations_idx = similarity_df.sort_values(by = ['similarity'], ascending = False)[:50].index
+        return self._songs_data.iloc[recommendations_idx]

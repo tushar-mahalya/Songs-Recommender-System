@@ -4,4 +4,6 @@ requests
 beautifulsoup4
 setuptools
 spotipy
+textblob
 scikit-learn
+streamlit

@@ -1,6 +1,7 @@
 # --- IMPORTING DEPENDENCIES ---
 
 import pandas as pd
+import json
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
@@ -10,9 +11,11 @@ from streamlit_lottie import st_lottie
 
 # --- LOADING REQUIRED DATAFRAMES ---
 
-#df = pd.read_csv("Billboards with Audio Features + Genres,Artists OHE (Final).csv", low_memory=False)
-#artists = pd.Series([i.split('Artist: ', 1)[1] for i in list(df.filter(regex='Artist: ').columns)])
-#genres = pd.Series([i.split('Genre: ', 1)[1].title() for i in list(df.filter(regex='Genre: ').columns)])
+df = pd.read_csv("artifacts/[Songs]_Preprocessed_Data.csv")
+with open('artifacts/Artists_and_Genres.json', "r") as file:
+    artists_and_genres = json.load(file)
+artists = artists_and_genres['Artist']
+genres = artists_and_genres['Genre']
 
 # --- LINKS FOR REQUIRED ANIMATION AND IMAGES ---
 
@@ -93,9 +96,9 @@ with st.container():
 user_df = None
 
 with st.container():
-    st.title("Pick your favourite songs :musical_note:")
+    st.title("Pick your favourite songs  :musical_note:")
     st.subheader("Search for the song's title")
-    user_songs = st.multiselect(label="Search", options=df["Song and Artist"].drop_duplicates(),
+    user_songs = st.multiselect(label="Search", options=df["Song and Artist"],
                                 label_visibility='collapsed')
     if st.button("Confirm Selection"):
 

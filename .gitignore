@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# unnamed juputer notebooks
+Untitled.ipynb
+Untitled1.ipynb
+Untitled3.ipynb
+
 # Distribution / packaging
 .Python
 build/

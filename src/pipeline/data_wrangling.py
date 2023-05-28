@@ -54,7 +54,7 @@ class DataPreprocessing:
             songs_data.to_csv('artifacts/[Songs]_Preprocessed_Data.csv', index=False)
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
             artists, genres = getArtistGenre(songs_data)
-            artists_and_genres = {'Artist': songs, 'Genre': genres}
+            artists_and_genres = {'Artist': artists, 'Genre': genres}
             with open('artifacts/Artists_and_Genres.json', 'w') as file:
                 json.dump(artists_and_genres, file)
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')

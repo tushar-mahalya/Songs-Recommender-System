@@ -4,3 +4,4 @@ requests
 beautifulsoup4
 setuptools
 spotipy
+scikit-learn

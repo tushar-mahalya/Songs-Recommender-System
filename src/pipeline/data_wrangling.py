@@ -55,9 +55,9 @@ class DataPreprocessing:
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
             songs, genres = getArtistGenre(songs_data)
             songs_and_artists = {'Artist': songs, 'Genre': genres}
-            #with open('artifacts/Songs_and_Artists.json', 'w') as file:
-            #    json.dump(songs_and_artists, file)
+            with open('artifacts/Songs_and_Artists.json', 'w') as file:
+                json.dump(songs_and_artists, file)
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')
-            return songs_data, feats_data, songs_and_artists
+            return songs_data, feats_data
         except Exception as e:
             raise CustomException(e, sys)

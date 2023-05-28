@@ -6,6 +6,7 @@ import requests
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_lottie import st_lottie
+from src.utils import getSongValues
 
 # from streamlit_backend import getRecommendations, getMoodPlaylist, quality, getSongValues, getArtistValues, getGenreValues, plotArtist, plotGenre, plotPizza
 
@@ -16,6 +17,11 @@ with open('artifacts/Artists_and_Genres.json', "r") as file:
     artists_and_genres = json.load(file)
 artists = artists_and_genres['Artist']
 genres = artists_and_genres['Genre']
+
+# --- Initializing Recommender System ---
+
+from src.pipeline.recommender_engine import RecommenderEngine
+rec_sys = RecommenderEngine()
 
 # --- LINKS FOR REQUIRED ANIMATION AND IMAGES ---
 
@@ -98,7 +104,7 @@ user_df = None
 with st.container():
     st.title("Pick your favourite songs  :musical_note:")
     st.subheader("Search for the song's title")
-    user_songs = st.multiselect(label="Search", options=df["Song and Artist"],
+    user_songs = st.multiselect(label="Search", options=df["Song-Artist"],
                                 label_visibility='collapsed')
     if st.button("Confirm Selection"):
 
@@ -106,15 +112,14 @@ with st.container():
             st.error("Please select atleast 5 songs", icon="⚠️")
 
         else:
-            user_df = df[df["Song and Artist"].isin(user_songs)]
-            recs_df = getRecommendations(user_df)
+            recs_df = rec_sys.Recommend_Songs(user_songs)
 
             st.subheader("Below are the profiles of your chosen songs, using which we'll analyse your preferences..")
 
             cols = st.columns(5)
             for i in range(0, 5):
                 with cols[i]:
-                    st.pyplot(plotPizza(getSongValues(user_df['Song and Artist'].values[i])))
+                    st.pyplot(plotPizza(getSongValues(user_df['Song-Artist'].values[i])))
                     st.markdown(f"""<p align = 'center'> <b> Song: </b> {user_df['Song'].values[i]} <br>
                                 <b> Artist: </b> {user_df['Artist'].values[i]} <br>
                                 <a href = {'https://open.spotify.com/track/' + user_df['URI'].values[i].split(":")[2]}>

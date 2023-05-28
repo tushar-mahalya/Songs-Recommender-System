@@ -10,9 +10,9 @@ from streamlit_lottie import st_lottie
 
 # --- LOADING REQUIRED DATAFRAMES ---
 
-df = pd.read_csv("Billboards with Audio Features + Genres,Artists OHE (Final).csv", low_memory=False)
-artists = pd.Series([i.split('Artist: ', 1)[1] for i in list(df.filter(regex='Artist: ').columns)])
-genres = pd.Series([i.split('Genre: ', 1)[1].title() for i in list(df.filter(regex='Genre: ').columns)])
+#df = pd.read_csv("Billboards with Audio Features + Genres,Artists OHE (Final).csv", low_memory=False)
+#artists = pd.Series([i.split('Artist: ', 1)[1] for i in list(df.filter(regex='Artist: ').columns)])
+#genres = pd.Series([i.split('Genre: ', 1)[1].title() for i in list(df.filter(regex='Genre: ').columns)])
 
 # --- LINKS FOR REQUIRED ANIMATION AND IMAGES ---
 
@@ -32,7 +32,7 @@ casette = 'https://www.scdn.co/i/500/cassette.svg'
 
 # --- PAGE CONFIGURATION ---
 
-st.set_page_config(page_title="NOMA's Spotify Music Recommendation System", page_icon=":notes:", layout="wide")
+st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
 
 # Removing whitespace from the top of the page
 st.markdown("""
@@ -67,7 +67,7 @@ s_box = st.markdown("""
 page_bg = """
 <style>
 [data-testid="stAppViewContainer"]{
-background-color: #9bf0e1;
+background-color: #000000;
 background-repeat: no-repeat;
 background-position: left;
 }
@@ -77,7 +77,7 @@ st.markdown(page_bg, unsafe_allow_html=True)
 
 # Title and intro section
 # Heading
-heading_animation = "<p style = 'font-size: 70px;'><b>Spotify Music Recommendation System</b></p>"
+heading_animation = "<p style = 'font-size: 60px;'><b>Spotify Music Recommendation System</b></p>"
 
 # --- INTRODUCTION ---
 
@@ -317,7 +317,7 @@ text-align: center;
 }
 </style>
 <div class="footer">
-<p>Developed with ❤ by Mansi, Chaitanya, Aditya, and Vrish</p>
+<p>Developed with ❤ by Tushar Sharma</p>
 </div>
 """
 st.markdown(footer, unsafe_allow_html=True)

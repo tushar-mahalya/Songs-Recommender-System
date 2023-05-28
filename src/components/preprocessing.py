@@ -1,23 +1,26 @@
+import warnings
+from ast import literal_eval
+from collections import Counter
+from typing import Any
+
 import numpy as np
 import pandas as pd
-from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
-import warnings
 
 warnings.filterwarnings("ignore")
 
 
 # noinspection PyBroadException
-def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
+def formatToList(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Combines the song and artist names into a single column with a hyphen separator.
+    Corrects the formatting of Artist Names and Artist(s) Genre column to List object.
 
     Args:
-        df (pd.DataFrame): The input DataFrame with columns 'Song' and 'Artist Names'.
+        df (pd.DataFrame): The input DataFrame with columns 'Artist Names' and 'Artist(s) Genre'.
 
     Returns:
-        pd.DataFrame: Original DataFrame with extra column 'Song-Artist' combined of 'Artist Names' and 'Song'.
+        pd.DataFrame: Original DataFrame with correct formatting of specified columns.
     """
     try:
         df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
@@ -26,6 +29,19 @@ def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
         df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: np.nan)
         df['Artist Names'] = df['Artist Names'].apply(lambda value: np.nan)
 
+    return df
+
+
+def combineArtistGenre(df: pd.DataFrame) -> pd.DataFrame:
+    """
+        Combines the song and artist names into a single column with a hyphen separator.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame with columns 'Song' and 'Artist Names'.
+
+        Returns:
+            pd.DataFrame: Original DataFrame with extra column 'Song-Artist' combined of 'Artist Names' and 'Song'.
+        """
     df['Song-Artist'] = df['Song'] + ' - ' + df['Artist Names'].apply(lambda artist: ', '.join(artist))
     return df
 
@@ -104,3 +120,28 @@ def Standardize_Features(df: pd.DataFrame, columns: list) -> pd.DataFrame:
     scaler = MinMaxScaler()
     df_scaled = pd.DataFrame(scaler.fit_transform(num_df), columns=num_df.columns)
     return df_scaled
+
+
+def getArtistGenre(df: pd.DataFrame) -> tuple[list[Any], list[Any]]:
+    """
+    Get the Unique value of the artists and the genres.
+
+    Args:
+        df (pandas.DataFrame): The input DataFrame with columns 'Artist Names' and 'Artist(s) Genre'.
+
+    Returns:
+        tuple[list[Any], list[Any]]: Lists with all artists and genres from the DataFrame.
+    """
+    all_songs_list = list(df['Artist Names'])
+    all_genre_list = list(df['Artist(s) Genres'])
+    songs_flat_list = [artist for sublist in all_songs_list for artist in sublist]
+    genre_flat_list = [artist for sublist in all_genre_list for artist in sublist]
+    song_count = Counter(songs_flat_list)
+    genre_count = Counter(genre_flat_list)
+    artists = []
+    genres = []
+    for artist, _ in song_count.items():
+        artists.append(artist)
+    for genre, _ in genre_count.items():
+        genres.append(genre)
+    return artists, genres

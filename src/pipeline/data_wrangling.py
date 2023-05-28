@@ -1,9 +1,10 @@
 import sys
+import json
 import pandas as pd
 from dataclasses import dataclass
 
-from src.components.preprocessing import combineSongArtist, removeDuplicates
-from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features
+from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre
+from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features, getArtistGenre
 from src.components.sentiment import Sentiment_Features
 
 from src.exception import CustomException
@@ -25,7 +26,8 @@ class DataPreprocessing:
     def data_preprocessing(data_df: pd.DataFrame):
         try:
             logging.info('Data Preprocessing started.')
-            prep_df = combineSongArtist(data_df)
+            prep_df = formatToList(data_df)
+            prep_df = combineArtistGenre(prep_df)
             prep_df = removeDuplicates(prep_df)
             genre_df = TFIDF_Features(prep_df)
             subject_df, polar_df = Sentiment_Features(prep_df, 'Song')
@@ -45,12 +47,17 @@ class DataPreprocessing:
         except Exception as e:
             raise CustomException(e, sys)
 
+    @property
     def get_preprocessed_data(self):
         try:
             songs_data, feats_data = self.data_preprocessing(self._data)
             songs_data.to_csv('artifacts/[Songs]_Preprocessed_Data.csv', index=False)
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
+            songs, genres = getArtistGenre(songs_data)
+            songs_and_artists = {'Artist': songs, 'Genre': genres}
+            #with open('artifacts/Songs_and_Artists.json', 'w') as file:
+            #    json.dump(songs_and_artists, file)
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')
-            return songs_data, feats_data
+            return songs_data, feats_data, songs_and_artists
         except Exception as e:
             raise CustomException(e, sys)

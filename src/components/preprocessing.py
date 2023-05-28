@@ -1,11 +1,14 @@
+import numpy as np
 import pandas as pd
 from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
+# noinspection PyBroadException
 def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
     """
     Combines the song and artist names into a single column with a hyphen separator.
@@ -14,7 +17,7 @@ def combineSongArtist(df: pd.DataFrame) -> pd.DataFrame:
         df (pd.DataFrame): The input DataFrame with columns 'Song' and 'Artist Names'.
 
     Returns:
-        pd.DataFrame: Orignal DataFrame with extra column 'Song-Artist' combined of 'Artist Names' and 'Song'.
+        pd.DataFrame: Original DataFrame with extra column 'Song-Artist' combined of 'Artist Names' and 'Song'.
     """
     try:
         df['Artist(s) Genres'] = df['Artist(s) Genres'].apply(lambda value: literal_eval(value))
@@ -35,13 +38,13 @@ def removeDuplicates(df: pd.DataFrame) -> pd.DataFrame:
         df (pandas.DataFrame): The input DataFrame.
 
     Returns:
-        pandas.DataFrame: Orignal DataFrame without duplicate rows and NaN values.
+        pandas.DataFrame: Original DataFrame without duplicate rows and NaN values.
     """
     duplicate_idx = df[df.duplicated(subset=['Song-Artist'])].index
     df.drop(duplicate_idx, axis=0, inplace=True)
-    df.dropna(subset = ['Song', 'Acousticness', 'Danceability', 'Energy',
-       'Instrumentalness', 'Liveness', 'Loudness', 'Speechiness', 'Tempo',
-       'Valence', 'Key', 'Mode', 'Time Signature', 'Popularity'], inplace = True)
+    df.dropna(subset=['Song', 'Acousticness', 'Danceability', 'Energy',
+                      'Instrumentalness', 'Liveness', 'Loudness', 'Speechiness', 'Tempo',
+                      'Valence', 'Key', 'Mode', 'Time Signature', 'Popularity'], inplace=True)
     df.reset_index(drop=True, inplace=True)
     return df
 

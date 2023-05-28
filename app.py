@@ -78,44 +78,29 @@ st.markdown(page_bg, unsafe_allow_html=True)
 # Title and intro section
 # Heading
 heading_animation = "<p style = 'font-size: 70px;'><b>Spotify Music Recommendation System</b></p>"
-# Intro lines
-intro_para = """
-<p style = "font-size: 24px;">
-This recommendation system, along with the website, has been created by the team <span style="font-size:120%"><b>Not a Modelling Agency</b></span>.
-<br> <br>
-To try out the algorithm, pick out five songs from our database which consists of <b> Billboard Hot 100 tracks</b> from the time period <b>1960 to 2021</b> and our system will analyse various attributes such as artist, artist's genres, audio features, and more to recommend you songs that we hope you might like. <br> <br>
-Along with the recommendations, you also get to see the song and artist profiles of your selected tracks. These song profiles have been created using the features Spotify itself provides. You can find out more in depth about each feature <a href = {https://developer.spotify.com/discover/#:~:text=Audio%20Features%20%26%20Analysis,-Explore%20audio%20features&text=For%20more%20advanced%20use%20cases,Context%3A%20Liveness%2C%20Acousticness}> <i>here</i></a>.
-</p>"""
 
 # --- INTRODUCTION ---
+
 with st.container():
-    st.subheader("Not a Modelling Agency is proud to present,")
     left_col, right_col = st.columns([1, 9])
     with left_col:
         components.html(spotify_animation_html)
     with right_col:
         st.markdown(heading_animation, unsafe_allow_html=True)
 
-with st.container():
-    left_col, right_col = st.columns([1.4, 1])
-    with left_col:
-        st.markdown(intro_para, unsafe_allow_html=True)
-    with right_col:
-        st.image(casette, use_column_width=False)
-
 # --- RECC SYSTEM ---
 
 user_df = None
 
 with st.container():
-    st.title("Pick your five favourite songs :musical_note:")
+    st.title("Pick your favourite songs :musical_note:")
     st.subheader("Search for the song's title")
     user_songs = st.multiselect(label="Search", options=df["Song and Artist"].drop_duplicates(),
                                 label_visibility='collapsed')
     if st.button("Confirm Selection"):
 
         if len(user_songs) < 5 or len(user_songs) > 5:
-            st.error("Please select 5 songs", icon="⚠️")
+            st.error("Please select atleast 5 songs", icon="⚠️")
 
         else:
             user_df = df[df["Song and Artist"].isin(user_songs)]

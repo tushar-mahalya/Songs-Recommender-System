@@ -103,6 +103,7 @@ def addURIColumn(df: pd.DataFrame, sp: Spotify) -> pd.DataFrame:
     return df
 
 
+# noinspection PyBroadException
 def Spotify_Features(df: pd.DataFrame, sp: Spotify) -> pd.DataFrame:
     """
     Fetch Data from Spotify API and give out fresh dataframe with other additional information and audio features

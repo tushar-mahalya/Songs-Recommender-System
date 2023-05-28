@@ -53,15 +53,17 @@ class DataPreprocessing:
             songs_data, feats_data = self.data_preprocessing(self._data)
             songs_data.to_csv('artifacts/[Songs]_Preprocessed_Data.csv', index=False)
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
-            songs_data = formatToList(songs_data)
-            ohe_artist = OHE_List(songs_data, 'Artist Names', 'Artist')
-            ohe_genre = OHE_List(songs_data, 'Artist(s) Genre', 'Genre')
-            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
-            ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
+            
             artists, genres = getArtistGenre(songs_data)
             artists_and_genres = {'Artist': artists, 'Genre': genres}
             with open('artifacts/Artists_and_Genres.json', 'w') as file:
                 json.dump(artists_and_genres, file)
+            
+            ohe_artist = OHE_List(songs_data, 'Artist Names', 'Artist')
+            ohe_genre = OHE_List(songs_data, 'Artist(s) Genres', 'Genre')
+            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
+            ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
+            
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')
             return songs_data, feats_data
         except Exception as e:

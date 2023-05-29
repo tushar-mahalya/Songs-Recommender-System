@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from dataclasses import dataclass
 
-from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre, OHE_List
+from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre, OHE_Artist_Genre
 from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features, getArtistGenre
 from src.components.sentiment import Sentiment_Features
 
@@ -47,7 +47,6 @@ class DataPreprocessing:
         except Exception as e:
             raise CustomException(e, sys)
 
-    @property
     def get_preprocessed_data(self):
         try:
             songs_data, feats_data = self.data_preprocessing(self._data)
@@ -58,12 +57,9 @@ class DataPreprocessing:
             artists_and_genres = {'Artist': artists, 'Genre': genres}
             with open('artifacts/Artists_and_Genres.json', 'w') as file:
                 json.dump(artists_and_genres, file)
-            
-            ohe_artist = OHE_List(songs_data, 'Artist Names', 'Artist')
-            ohe_genre = OHE_List(songs_data, 'Artist(s) Genres', 'Genre')
-            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
+                file.close()
+            ohe_artist_genre = OHE_Artist_Genre(songs_data)
             ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
-            
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')
             return songs_data, feats_data
         except Exception as e:

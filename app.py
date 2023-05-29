@@ -1,27 +1,18 @@
 # --- IMPORTING DEPENDENCIES ---
 
 import pandas as pd
-import json
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_lottie import st_lottie
-from src.utils import getSongValues
 
 # from streamlit_backend import getRecommendations, getMoodPlaylist, quality, getSongValues, getArtistValues, getGenreValues, plotArtist, plotGenre, plotPizza
 
 # --- LOADING REQUIRED DATAFRAMES ---
 
-df = pd.read_csv("artifacts/[Songs]_Preprocessed_Data.csv")
-with open('artifacts/Artists_and_Genres.json', "r") as file:
-    artists_and_genres = json.load(file)
-artists = artists_and_genres['Artist']
-genres = artists_and_genres['Genre']
-
-# --- Initializing Recommender System ---
-
-from src.pipeline.recommender_engine import RecommenderEngine
-rec_sys = RecommenderEngine()
+df = pd.read_csv("Billboards with Audio Features + Genres,Artists OHE (Final).csv", low_memory=False)
+artists = pd.Series([i.split('Artist: ', 1)[1] for i in list(df.filter(regex='Artist: ').columns)])
+genres = pd.Series([i.split('Genre: ', 1)[1].title() for i in list(df.filter(regex='Genre: ').columns)])
 
 # --- LINKS FOR REQUIRED ANIMATION AND IMAGES ---
 
@@ -41,7 +32,7 @@ casette = 'https://www.scdn.co/i/500/cassette.svg'
 
 # --- PAGE CONFIGURATION ---
 
-st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
+st.set_page_config(page_title="NOMA's Spotify Music Recommendation System", page_icon=":notes:", layout="wide")
 
 # Removing whitespace from the top of the page
 st.markdown("""
@@ -76,7 +67,7 @@ s_box = st.markdown("""
 page_bg = """
 <style>
 [data-testid="stAppViewContainer"]{
-background-color: #000000;
+background-color: #9bf0e1;
 background-repeat: no-repeat;
 background-position: left;
 }
@@ -86,7 +77,7 @@ st.markdown(page_bg, unsafe_allow_html=True)
 
 # Title and intro section
 # Heading
-heading_animation = "<p style = 'font-size: 60px;'><b>Spotify Music Recommendation System</b></p>"
+heading_animation = "<p style = 'font-size: 70px;'><b>Spotify Music Recommendation System</b></p>"
 
 # --- INTRODUCTION ---
 
@@ -102,9 +93,9 @@ with st.container():
 user_df = None
 
 with st.container():
-    st.title("Pick your favourite songs  :musical_note:")
+    st.title("Pick your favourite songs :musical_note:")
     st.subheader("Search for the song's title")
-    user_songs = st.multiselect(label="Search", options=df["Song-Artist"],
+    user_songs = st.multiselect(label="Search", options=df["Song and Artist"].drop_duplicates(),
                                 label_visibility='collapsed')
     if st.button("Confirm Selection"):
 
@@ -112,14 +103,15 @@ with st.container():
             st.error("Please select atleast 5 songs", icon="⚠️")
 
         else:
-            recs_df = rec_sys.Recommend_Songs(user_songs)
+            user_df = df[df["Song and Artist"].isin(user_songs)]
+            recs_df = getRecommendations(user_df)
 
             st.subheader("Below are the profiles of your chosen songs, using which we'll analyse your preferences..")
 
             cols = st.columns(5)
             for i in range(0, 5):
                 with cols[i]:
-                    st.pyplot(plotPizza(getSongValues(user_df['Song-Artist'].values[i])))
+                    st.pyplot(plotPizza(getSongValues(user_df['Song and Artist'].values[i])))
                     st.markdown(f"""<p align = 'center'> <b> Song: </b> {user_df['Song'].values[i]} <br>
                                 <b> Artist: </b> {user_df['Artist'].values[i]} <br>
                                 <a href = {'https://open.spotify.com/track/' + user_df['URI'].values[i].split(":")[2]}>
@@ -325,7 +317,7 @@ text-align: center;
 }
 </style>
 <div class="footer">
-<p>Developed with ❤ by Tushar Sharma</p>
+<p>Developed with ❤ by Mansi, Chaitanya, Aditya, and Vrish</p>
 </div>
 """
 st.markdown(footer, unsafe_allow_html=True)

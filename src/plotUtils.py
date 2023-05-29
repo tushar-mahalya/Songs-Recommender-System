@@ -12,6 +12,15 @@ lightgrey = "#bdbdbd"
 robotoBold = FontManager('https://tushar-mahalya.github.io/images-repo/Fonts/GothamBold.ttf')
 robotoMed = FontManager('https://tushar-mahalya.github.io/images-repo/Fonts/GothamMedium.ttf')
 
+def format_song_name(song: str):
+    new = song.split('(')[0].strip()
+    new = new.split('-')[0].strip()
+    return new
+
+def format_artist_name(artist_str: str):
+    new = literal_eval(artist_str)[0]
+    return new
+
 def getFeaturePercentiles(df: pd.DataFrame, feature: str, feat_type: str = 'song'):
     featColumns = ['Popularity', 'Acousticness', 'Danceability', 'Energy', 'Instrumentalness', 'Loudness',
                    'Speechiness', 'Tempo', 'Valence']

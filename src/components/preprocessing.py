@@ -88,7 +88,7 @@ def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
     return genre_df
 
 
-def OHE_List(df: pd.DataFrame, col: str, col_name: str) -> pd.DataFrame:
+def OHE_Artist_Genre(df: pd.DataFrame) -> pd.DataFrame:
     """
     One-hot encode a column with list values in a DataFrame.
 
@@ -101,13 +101,16 @@ def OHE_List(df: pd.DataFrame, col: str, col_name: str) -> pd.DataFrame:
         pd.DataFrame: The DataFrame with the specified column one-hot encoded.
         
     """
-    mlb = MultiLabelBinarizer(sparse_output=True)
+    mlb = MultiLabelBinarizer()
 
-    ohe_df = pd.DataFrame.sparse.from_spmatrix(
-        mlb.fit_transform(df.pop(col)),
-        index=df.index,
-        columns=[col_name + ' | ' + cls for cls in mlb.classes_])
-    return ohe_df
+    ohe_artist = pd.DataFrame(mlb.fit_transform(df.pop('Artist Names')), index=df.index,
+                              columns=['Artist' + ' | ' + cls for cls in mlb.classes_])
+    ohe_genre = pd.DataFrame(mlb.fit_transform(df.pop('Artist(s) Genres')),index=df.index,
+                             columns=['Genre' + ' | ' + cls for cls in mlb.classes_])
+    audio_feats_df = df[['Popularity', 'Acousticness', 'Danceability', 'Energy',
+                                 'Instrumentalness', 'Loudness', 'Speechiness', 'Tempo', 'Valence']]
+    ohe_artist_genre = pd.concat([ohe_artist, ohe_genre, audio_feats_df], axis=1)
+    return ohe_artist_genre
 
 
 def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:

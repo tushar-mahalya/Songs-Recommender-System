@@ -3,8 +3,8 @@ import json
 import pandas as pd
 from dataclasses import dataclass
 
-from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre, OHE_Artist_Genre
-from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features, getArtistGenre
+from src.components.preprocessing import formatToList, removeDuplicates, combineArtistGenre, OHE_List_w_Feats
+from src.components.preprocessing import TFIDF_Features, OHE_Column, Standardize_Features, getAnnualHitQualityProfile
 from src.components.sentiment import Sentiment_Features
 
 from src.exception import CustomException
@@ -53,13 +53,17 @@ class DataPreprocessing:
             songs_data.to_csv('artifacts/[Songs]_Preprocessed_Data.csv', index=False)
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
             
-            artists, genres = getArtistGenre(songs_data)
-            artists_and_genres = {'Artist': artists, 'Genre': genres}
-            with open('artifacts/Artists_and_Genres.json', 'w') as file:
+            artists_profile, genres_profile = getAnnualHitQualityProfile(songs_data)
+            artists_and_genres = {'Artist': artists_profile, 'Genre': genres_profile}
+            with open('artifacts/Artists_&_Genres_Hit_Profile.json', 'w') as file:
                 json.dump(artists_and_genres, file)
                 file.close()
-            ohe_artist_genre = OHE_Artist_Genre(songs_data)
+
+            ohe_artist = OHE_List_w_Feats(songs_data, 'Artist', audio_feats=False)
+            ohe_genre = OHE_List_w_Feats(songs_data, 'Genre')
+            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
             ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
+
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')
             return songs_data, feats_data
         except Exception as e:

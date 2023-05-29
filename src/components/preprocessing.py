@@ -88,29 +88,36 @@ def TFIDF_Features(df: pd.DataFrame) -> pd.DataFrame:
     return genre_df
 
 
-def OHE_Artist_Genre(df: pd.DataFrame) -> pd.DataFrame:
+def OHE_List_w_Feats(df: pd.DataFrame, feature_type: str, audio_feats: bool = True) -> pd.DataFrame:
     """
-    One-hot encode a column with list values in a DataFrame.
+    One-hot encode a column with list values in a DataFrame and optionally include additional audio features.
 
     Args:
         df (pd.DataFrame): The input DataFrame.
-        col (str): The column name containing the list values to be one-hot encoded.
-        col_name (str): The desired prefix for the resulting one-hot encoded columns.
+        feature_type (str): The type of the feature to be one-hot encoded ('Artist' or 'Genre').
+        audio_feats (bool, optional): Whether to include additional audio features in the output DataFrame.
+                                      Defaults to True.
 
     Returns:
-        pd.DataFrame: The DataFrame with the specified column one-hot encoded.
-        
+        pd.DataFrame: The DataFrame with the specified column one-hot encoded and optionally combined with audio features.
+
     """
     mlb = MultiLabelBinarizer()
 
-    ohe_artist = pd.DataFrame(mlb.fit_transform(df.pop('Artist Names')), index=df.index,
-                              columns=['Artist' + ' | ' + cls for cls in mlb.classes_])
-    ohe_genre = pd.DataFrame(mlb.fit_transform(df.pop('Artist(s) Genres')),index=df.index,
-                             columns=['Genre' + ' | ' + cls for cls in mlb.classes_])
-    audio_feats_df = df[['Popularity', 'Acousticness', 'Danceability', 'Energy',
-                                 'Instrumentalness', 'Loudness', 'Speechiness', 'Tempo', 'Valence']]
-    ohe_artist_genre = pd.concat([ohe_artist, ohe_genre, audio_feats_df], axis=1)
-    return ohe_artist_genre
+    if feature_type == 'Artist':
+        col = 'Artist Names'
+    elif feature_type == 'Genre':
+        col = 'Artist(s) Genres'
+
+    ohe_df = pd.DataFrame(mlb.fit_transform(df.pop(col)), index=df.index,
+                          columns=[feature_type + ' | ' + cls for cls in mlb.classes_])
+    if audio_feats:
+        audio_feats_df = df[['Popularity', 'Acousticness', 'Danceability', 'Energy', 'Hot100 Rank', 'Valence',
+                             'Hot100 Ranking Year', 'Instrumentalness', 'Loudness', 'Speechiness', 'Tempo']]
+        ohe_final_df = pd.concat([ohe_df, audio_feats_df], axis=1)
+        return ohe_final_df
+    else:
+        return ohe_df
 
 
 def OHE_Column(df: pd.DataFrame, column: str, new_name: str) -> pd.DataFrame:
@@ -148,15 +155,51 @@ def Standardize_Features(df: pd.DataFrame, columns: list) -> pd.DataFrame:
     return df_scaled
 
 
-def getArtistGenre(df: pd.DataFrame) -> tuple[list[Any], list[Any]]:
+def Hit_Quality_Annual(feature_name: str, ohe_df: pd.DataFrame, feature_type: str) -> dict[int, int]:
     """
-    Get the Unique value of the artists and the genres.
+    Calculate the annual hit quality for a specific feature based on the provided one-hot encoded DataFrame.
+
+    Args:
+        feature_name (str): The name of the feature for which the hit quality will be calculated.
+        ohe_df (pandas.DataFrame): The one-hot encoded DataFrame containing the feature and hit rank information.
+        feature_type (str): The type of the feature (e.g., 'Artist', 'Genre').
+
+    Returns:
+        dict[int, int]: A dictionary representing the annual hit quality for the specified feature. The dictionary has
+        years as keys (int) and the corresponding hit quality scores (int) as values.
+
+    """
+
+    def quality(ranks: list[int]) -> int:
+        rankQuality = []
+        for rank in ranks:
+            rankQuality.append(100 - rank + 1)
+
+        return sum(rankQuality)
+
+    feat_df = ohe_df[ohe_df[f'{feature_type} | ' + feature_name] == 1]
+    new_feat_df = pd.DataFrame()
+    new_feat_df['Year'] = [year for year in range(1946, 2023)]
+    tempArtist = feat_df.groupby('Hot100 Ranking Year')['Hot100 Rank'].apply(list).apply(quality)
+    new_feat_df = new_feat_df.merge(tempArtist, left_on='Year', right_index=True, how='left')
+    new_feat_df.columns = ['Year', 'Hit Quality']
+    new_feat_df['Year'] = new_feat_df['Year'].astype(int)
+    new_feat_df.fillna(0, inplace=True)
+    hit_rank_dict = new_feat_df.set_index('Year')['Hit Quality'].to_dict()
+    return hit_rank_dict
+
+
+def getAnnualHitQualityProfile(df: pd.DataFrame) -> tuple[dict[Any, Any], dict[Any, Any]]:
+    """
+    Calculate the annual hit quality profile for artists and genres based on the input DataFrame.
 
     Args:
         df (pandas.DataFrame): The input DataFrame with columns 'Artist Names' and 'Artist(s) Genre'.
 
     Returns:
-        tuple[list[Any], list[Any]]: Lists with all artists and genres from the DataFrame.
+        tuple[dict[Any, Any], dict[Any, Any]]: A tuple containing two dictionaries representing the annual hit quality
+        profiles for artists and genres respectively. The dictionaries have artists and genres as keys and their
+        respective hit quality scores as values.
     """
     all_songs_list = list(df['Artist Names'])
     all_genre_list = list(df['Artist(s) Genres'])
@@ -170,4 +213,14 @@ def getArtistGenre(df: pd.DataFrame) -> tuple[list[Any], list[Any]]:
         artists.append(artist)
     for genre, _ in genre_count.items():
         genres.append(genre)
-    return artists, genres
+    ohe_artist_df = OHE_List_w_Feats(df, 'Artist')
+    ohe_genre_df = OHE_List_w_Feats(df, 'Genre')
+
+    artist_rank_dict = {}
+    genre_rank_dict = {}
+    for artist in artists:
+        artist_rank_dict[artist] = Hit_Quality_Annual(artist, ohe_artist_df, 'Artist')
+    for genre in genres:
+        genre_rank_dict[genre] = Hit_Quality_Annual(genre, ohe_genre_df, 'Genre')
+
+    return artist_rank_dict, genre_rank_dict

@@ -7,3 +7,6 @@ spotipy
 textblob
 scikit-learn
 streamlit
+matplotlib
+scipy
+mplsoccer

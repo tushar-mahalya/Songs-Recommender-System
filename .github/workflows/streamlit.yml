@@ -1,9 +1,9 @@
 name: Streamlit App CI/CD
 
 on:
-  push:
+  workflow_dispatch:
     branches:
-      - main
+      - root
 
 jobs:
   build-and-deploy:

@@ -5,24 +5,38 @@ import json
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
-from streamlit_lottie import st_lottie
-from src.plotUtils import getFeaturePercentiles, plotPizza
-from src.plotUtils import format_song_name, format_artist_name
+from src.plotUtils import getFeaturePercentiles, plotPizza, plotHitProfile
+from src.plotUtils import format_song_name, format_artist_name, getMoodPlaylist
 
-# from streamlit_backend import getRecommendations, getMoodPlaylist, quality, getSongValues, getArtistValues, getGenreValues, plotArtist, plotGenre, plotPizza
-
+st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
 # --- LOADING REQUIRED DATAFRAMES ---
+@st.cache
+def load_csv(csv_file_path):
+    df = pd.read_csv(csv_file_path)
+    return df
+@st.cache
+def load_json(json_file_path):
+    with open(json_file_path, "r") as file:
+        dict_file = json.load(file)
+    return dict_file
+@st.cache
+def upload_data(df, name):
+    df.to_csv(f'artifacts/{name}.csv', index= False)
 
-df = pd.read_csv("artifacts/[Songs]_Preprocessed_Data.csv")
-artist_genre_ohe_df = pd.read_csv('artifacts/[OHE]_Artist_Genre.csv')
-with open('artifacts/Artists_and_Genres.json', "r") as file:
-    artists_and_genres = json.load(file)
-artists = artists_and_genres['Artist']
-genres = artists_and_genres['Genre']
+main_data_path = "artifacts/[Songs]_Preprocessed_Data.csv"
+ohe_data_path = 'artifacts/[OHE]_Artist_Genre.csv'
+hit_profile_path = 'artifacts/Artists_&_Genres_Hit_Profile.json'
+
+df = load_csv(main_data_path)
+artist_genre_ohe_df = load_csv(ohe_data_path)
+hit_profile = load_json(hit_profile_path)
+artists = hit_profile['Artist'].keys()
+genres = hit_profile['Genre'].keys()
 
 # --- Initializing Recommender System ---
 
 from src.pipeline.recommender_engine import RecommenderEngine
+
 rec_sys = RecommenderEngine()
 
 # --- LINKS FOR REQUIRED ANIMATION AND IMAGES ---
@@ -42,7 +56,7 @@ casette = 'https://www.scdn.co/i/500/cassette.svg'
 
 # --- PAGE CONFIGURATION ---
 
-st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
+
 
 # Removing whitespace from the top of the page
 st.markdown("""
@@ -103,6 +117,7 @@ with st.container():
 user_df = None
 
 with st.container():
+
     st.title("Pick your favourite songs  :musical_note:")
     st.subheader("Search for the song's title")
     user_songs = st.multiselect(label="Search", options=df["Song-Artist"],
@@ -115,6 +130,8 @@ with st.container():
         else:
             user_df = df[df["Song-Artist"].isin(user_songs)]
             recs_df = rec_sys.Recommend_Songs(user_songs)
+            upload_data(recs_df, 'recommendations')
+
 
             st.subheader("Below are the profiles of your chosen songs, using which we'll analyse your preferences..")
 
@@ -138,45 +155,49 @@ with st.container():
                 for i in range(0, 5):
                     with cols[i]:
                         st.image(recs_df['Song Image'].values[i], use_column_width=True)
-                        st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[i])} <br>
+                        st.markdown(
+                            f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[i])} <br>
                                 <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[i])} <br>
                                 <a href = {recs_df['Spotify Link'].values[i]}>
                                 <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
                                 </p>""",
-                                    unsafe_allow_html=True)
+                            unsafe_allow_html=True)
             with st.container():
                 cols = st.columns(5)
                 for i in range(0, 5):
                     with cols[i]:
-                        st.image(recs_df['Song Image'].values[5+i], use_column_width=True)
-                        st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[5+i])} <br>
-                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[5+i])} <br>
-                                <a href = {recs_df['Spotify Link'].values[5+i]}>
+                        st.image(recs_df['Song Image'].values[5 + i], use_column_width=True)
+                        st.markdown(
+                            f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[5 + i])} <br>
+                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[5 + i])} <br>
+                                <a href = {recs_df['Spotify Link'].values[5 + i]}>
                                 <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
                                 </p>""",
-                                    unsafe_allow_html=True)
+                            unsafe_allow_html=True)
             with st.container():
                 cols = st.columns(5)
                 for i in range(0, 5):
                     with cols[i]:
-                        st.image(recs_df['Song Image'].values[10+i], use_column_width=True)
-                        st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[10+i])} <br>
-                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[10+i])} <br>
-                                <a href = {recs_df['Spotify Link'].values[10+i]}>
+                        st.image(recs_df['Song Image'].values[10 + i], use_column_width=True)
+                        st.markdown(
+                            f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[10 + i])} <br>
+                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[10 + i])} <br>
+                                <a href = {recs_df['Spotify Link'].values[10 + i]}>
                                 <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
                                 </p>""",
-                                    unsafe_allow_html=True)
+                            unsafe_allow_html=True)
             with st.container():
                 cols = st.columns(5)
                 for i in range(0, 5):
                     with cols[i]:
-                        st.image(recs_df['Song Image'].values[15+i], use_column_width=True)
-                        st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[15+i])} <br>
-                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[15+i])} <br>
-                                <a href = {recs_df['Spotify Link'].values[15+i]}>
+                        st.image(recs_df['Song Image'].values[15 + i], use_column_width=True)
+                        st.markdown(
+                            f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[15 + i])} <br>
+                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[15 + i])} <br>
+                                <a href = {recs_df['Spotify Link'].values[15 + i]}>
                                 <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
                                 </p>""",
-                                    unsafe_allow_html=True)
+                            unsafe_allow_html=True)
             with st.container():
                 left_col, right_col = st.columns([1, 7])
                 with left_col:
@@ -233,7 +254,7 @@ with st.container():
                 st.markdown(
                     '<p align = "center" style = "font-size: 24px; font-weight: bold"> Popularity w.r.t. Time </p>',
                     unsafe_allow_html=True)
-                st.pyplot(plotArtist(chosen_artist))
+                st.pyplot(plotHitProfile(hit_profile['Artist'][chosen_artist]))
                 st.markdown(
                     "<p align = 'center' style = 'font-size: 20px;'> The Hit Quality is a metric that measures the quality of the ranks.<br>To elaborate, instead of determining the popularity of an artist by counting the no. of times they've appeared in the Billboard Hot 100, the hit quality metric will try to emphasize the correction of ranking by giving more weightage to the higher ranks and less importance to the lower ones. This will result in a more robust judgement of an artist's popularity. </p>",
                     unsafe_allow_html=True)
@@ -245,7 +266,7 @@ with st.container():
                 st.markdown(
                     '<p align = "center" style = "font-size: 24px; font-weight: bold"> Mean Percentile Ranks <br> </p>',
                     unsafe_allow_html=True)
-                vals = getArtistValues(chosen_artist)
+                vals = getFeaturePercentiles(artist_genre_ohe_df, chosen_artist, 'artist')
                 st.pyplot(plotPizza(vals))
                 st.markdown(
                     f"<p align = 'center' style = 'font-size: 20px;'> A percentile rank indicates the percentage of scores in the frequency distribution that are less than that score. <br> In simple terms, a mean percentile rank of {vals[1]} for Acousticness for the artist {chosen_artist} indicates that {vals[1]}% of the songs in our database fall below the mean acousticness of the songs by the artist {chosen_artist}.</p>",
@@ -275,7 +296,7 @@ with st.container():
                 st.markdown(
                     '<p align = "center" style = "font-size: 24px; font-weight: bold"> Popularity w.r.t. Time </p>',
                     unsafe_allow_html=True)
-                st.pyplot(plotGenre(chosen_genre))
+                st.pyplot(plotHitProfile(hit_profile['Genre'][chosen_genre]))
                 st.markdown(
                     "<p align = 'center' style = 'font-size: 20px;'> The Hit Quality is a metric that measures the quality of the ranks.<br>To elaborate, instead of determining the popularity of an artist's genre by counting the no. of times it has appeared in the Billboard Hot 100, the hit quality metric will try to emphasize the correction of ranking by giving more weightage to the higher ranks and less importance to the lower ones. This will result in a more robust judgement of a genre's popularity. </p>",
                     unsafe_allow_html=True)
@@ -284,7 +305,7 @@ with st.container():
                 st.markdown(
                     '<p align = "center" style = "font-size: 24px; font-weight: bold"> Mean Percentile Ranks <br> </p>',
                     unsafe_allow_html=True)
-                vals = getGenreValues(chosen_genre)
+                vals = getFeaturePercentiles(artist_genre_ohe_df, chosen_genre, 'genre')
                 st.pyplot(plotPizza(vals))
                 st.markdown(
                     f"<p align = 'center' style = 'font-size: 20px;'> A percentile rank indicates the percentage of scores in the frequency distribution that are less than that score. <br> In simple terms, a mean percentile rank of {vals[1]} for Acousticness for the {chosen_genre} genre indicates that {vals[1]}% of the songs in our database fall below the mean acousticness of the songs belonging to the {chosen_genre} genre.</p>",
@@ -293,7 +314,7 @@ with st.container():
         # TAB 3 PLAYLISTS
 
         with tabs[2]:
-            moods = ["Trending songs", "Dance party", "Monday blues", "Energizing", "Positive vibes"]
+            moods = ["Trending songs", "Dance party", "Monday Blues", "Energizing", "Positive vibes"]
 
             # Code to enable choosing a mood
             st.subheader("Choose a Mood")
@@ -306,8 +327,9 @@ with st.container():
 
                     # Playlist display
             if chosen_mood != None:
+                recs_df = load_csv('artifacts/recommendations.csv')
 
-                mood_df = getMoodPlaylist(chosen_mood)
+                mood_df = getMoodPlaylist(recs_df, chosen_mood)
 
                 st.subheader(f"Here's a {chosen_mood} playlist for you,")
 
@@ -315,10 +337,10 @@ with st.container():
                     cols = st.columns(5)
                     for i in range(0, 5):
                         with cols[i]:
-                            st.image(mood_df['Album Cover Art'].values[i], use_column_width=True)
+                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
                             st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[i]} <br>
-                                        <b> Artist: </b> {mood_df['Artist'].values[i]} <br>
-                                        <a href = {'https://open.spotify.com/track/' + mood_df['URI'].values[i].split(":")[2]}>
+                                        <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[i])} <br>
+                                        <a href = {mood_df['Spotify Link'].values[i]}>
                                         <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
                                         </p>""",
                                         unsafe_allow_html=True)
@@ -326,10 +348,32 @@ with st.container():
                     cols = st.columns(5)
                     for i in range(0, 5):
                         with cols[i]:
-                            st.image(mood_df['Album Cover Art'].values[5 + i], use_column_width=True)
+                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
                             st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[5 + i]} <br>
-                                        <b> Artist: </b> {mood_df['Artist'].values[5 + i]} <br>
-                                        <a href = {'https://open.spotify.com/track/' + mood_df['URI'].values[5 + i].split(":")[2]}>
+                                        <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[5 + i])} <br>
+                                        <a href = {mood_df['Spotify Link'].values[5 + i]}>
+                                        <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
+                                        </p>""",
+                                        unsafe_allow_html=True)
+                with st.container():
+                    cols = st.columns(5)
+                    for i in range(0, 5):
+                        with cols[i]:
+                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
+                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[10 + i]} <br>
+                                        <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[10 + i])} <br>
+                                        <a href = {mood_df['Spotify Link'].values[10 + i]}>
+                                        <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
+                                        </p>""",
+                                        unsafe_allow_html=True)
+                with st.container():
+                    cols = st.columns(5)
+                    for i in range(0, 5):
+                        with cols[i]:
+                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
+                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[15 + i]} <br>
+                                        <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[15 + i])} <br>
+                                        <a href = {mood_df['Spotify Link'].values[15 + i]}>
                                         <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
                                         </p>""",
                                         unsafe_allow_html=True)
@@ -342,8 +386,9 @@ footer = """<style>
 position: fixed;
 left: 0;
 bottom: 0;
+top: 5px;
 width: 100%;
-background-color: #9bf0e1;
+background-color: #000000;
 color: black;
 text-align: center;
 }

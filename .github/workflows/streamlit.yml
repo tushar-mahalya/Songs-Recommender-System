@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build Streamlit app
-        run: streamlit run app.py
+        run: streamlit run app.py & sleep 10
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.0

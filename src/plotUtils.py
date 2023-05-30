@@ -2,6 +2,9 @@ import math
 from ast import literal_eval
 
 import scipy
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 from mplsoccer import PyPizza, FontManager
 import pandas as pd
 import numpy as np
@@ -111,3 +114,72 @@ def plotPizza(values):
     fig.patch.set_visible(False)
 
     return fig
+
+
+def plotHitProfile(feat_dict):
+    mpl.rc('axes', edgecolor=grey)
+    mpl.rc('axes', linewidth='2')
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Adding bg color and setting the grid
+    fig.set_facecolor(bg_color_cas)
+    ax.set_facecolor('w')
+    ax.set_axisbelow(True)
+    ax.grid(color=lightgrey, which='major', linestyle='--', alpha=1)
+
+    years = list(map(int, list(feat_dict.keys())))
+    hit_quality = list(map(float, list(feat_dict.values())))
+
+    # Plotting
+    ax.plot(years, hit_quality, '-', color=spotifyGreen, lw=4)
+
+    # Setting the limits for x and y axes
+    minYear = int(list(year for year in feat_dict if feat_dict[year] > 0)[0])
+    maxYear = max(years) + 1  # Add a buffer of 1 to the maximum year
+    ax.set_xlim([minYear, maxYear])
+
+    # Setting the x-axis ticks
+    num_ticks = 10  # Number of ticks on the x-axis
+    tick_step = (maxYear - minYear) / (num_ticks - 1)  # Calculate the tick step
+    x_ticks = [int(minYear + i * tick_step) for i in range(num_ticks)]  # Generate the ticks
+    ax.set_xticks(x_ticks)
+
+    # Setting the x label as year for every subplot
+    ax.set_xlabel('Year', fontsize=16, labelpad=10, fontproperties=robotoMed.prop, color='k')
+    ax.set_ylabel('Hit Quality', fontsize=16, labelpad=10, fontproperties=robotoMed.prop, color='k')
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    # Customizing the x and y tick labels
+    for ticklabel in ax.get_yticklabels():
+        ticklabel.set_fontproperties(robotoMed.prop)
+        ticklabel.set_fontsize(14)
+
+    for ticklabel in ax.get_xticklabels():
+        ticklabel.set_fontproperties(robotoMed.prop)
+        ticklabel.set_fontsize(14)
+
+    ax.tick_params(axis='both', which='major', labelcolor='k', length=0, color='#2b2b2b')
+
+    return fig
+
+
+def getMoodPlaylist(recc_df, chosen_mood):
+    if chosen_mood == "Trending songs":
+        rec_songs_idx = list(recc_df.sort_values(by='Popularity', ascending=False).index)[0:20]
+
+    elif chosen_mood == "Dance party":
+        rec_songs_idx = list(recc_df.sort_values(by='Danceability', ascending=False).index)[0:20]
+
+    elif chosen_mood == "Monday Blues":
+        rec_songs_idx = list(recc_df.sort_values(by='Valence', ascending=True).index)[0:20]
+
+    elif chosen_mood == "Energizing":
+        rec_songs_idx = list(recc_df.sort_values(by='Energy', ascending=False).index)[0:20]
+
+    elif chosen_mood == "Positive vibes":
+        rec_songs_idx = list(recc_df.sort_values(by='Valence', ascending=False).index)[0:20]
+
+    mood_df = recc_df.iloc[rec_songs_idx]
+
+    return mood_df

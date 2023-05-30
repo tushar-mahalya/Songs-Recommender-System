@@ -48,5 +48,5 @@ class RecommenderEngine:
         clean_feats_df = self.removeIndexfromDF(song_list_playlist_idx, self._features_data)
         playlist_summary_arr = self.songSummarizationVector(song_list_playlist_idx, self._features_data)
         similarity_df = self.getSimilarityDF(clean_feats_df, playlist_summary_arr)
-        recommendations_idx = similarity_df.sort_values(by=['similarity'], ascending=False)[:50].index
+        recommendations_idx = similarity_df.sort_values(by=['similarity'], ascending=False)[:100].index
         return self._songs_data.iloc[recommendations_idx]

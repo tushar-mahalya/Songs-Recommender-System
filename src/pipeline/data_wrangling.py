@@ -57,7 +57,8 @@ class DataPreprocessing:
             ohe_genre = OHE_List_w_Feats(songs_data, 'Genre')
             ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
             ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
-            
+            songs_data = pd.read_csv('artifacts/[Songs]_Preprocessed_Data.csv')
+            songs_data = formatToList(songs_data)
             artists_profile, genres_profile = getAnnualHitQualityProfile(songs_data)
             artists_and_genres = {'Artist': artists_profile, 'Genre': genres_profile}
             with open('artifacts/Artists_&_Genres_Hit_Profile.json', 'w') as file:

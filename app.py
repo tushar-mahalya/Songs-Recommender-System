@@ -10,16 +10,16 @@ from src.plotUtils import format_song_name, format_artist_name, getMoodPlaylist
 
 st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
 # --- LOADING REQUIRED DATAFRAMES ---
-@st.cache
+@st.cache_data
 def load_csv(csv_file_path):
     df = pd.read_csv(csv_file_path)
     return df
-@st.cache
+@st.cache_data
 def load_json(json_file_path):
     with open(json_file_path, "r") as file:
         dict_file = json.load(file)
     return dict_file
-@st.cache
+@st.cache_data
 def upload_data(df, name):
     df.to_csv(f'artifacts/{name}.csv', index= False)
 
@@ -44,14 +44,13 @@ rec_sys = RecommenderEngine()
 # animation html scripts
 spotify_animation_html = """
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<lottie-player src="https://assets10.lottiefiles.com/packages/lf20_a6hjf7nd.json"  background="transparent"  speed="1"  style="width: 110px; height: 110px;"  loop  autoplay></lottie-player> """
+<lottie-player src="https://assets10.lottiefiles.com/packages/lf20_a6hjf7nd.json"  background="transparent"  speed="1"  style="width: 105px; height: 105px;"  loop  autoplay></lottie-player> """
 astro_animation_html = """
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_euaveaxu.json"  background="transparent"  speed="1"  style="width: 170px; height: 160px;"  loop  autoplay></lottie-player> """
 
 # images
 spotify_logo = "https://www.freepnglogos.com/uploads/spotify-logo-png/file-spotify-logo-png-4.png"
-casette = 'https://www.scdn.co/i/500/cassette.svg'
 # ---------------------------------------------------------------------------------------------- #
 
 # --- PAGE CONFIGURATION ---
@@ -59,11 +58,7 @@ casette = 'https://www.scdn.co/i/500/cassette.svg'
 
 
 # Removing whitespace from the top of the page
-st.markdown("""
-<style>
-.css-18e3th9 { padding-top: 0rem; padding-bottom: 10rem; padding-left: 5rem; padding-right: 5rem; }
-.css-1d391kg { padding-top: 3.5rem; padding-right: 1rem; padding-bottom: 3.5rem; padding-left: 1rem; }
-</style>""", unsafe_allow_html=True)
+
 
 # Button config
 m = st.markdown("""
@@ -348,7 +343,7 @@ with st.container():
                     cols = st.columns(5)
                     for i in range(0, 5):
                         with cols[i]:
-                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
+                            st.image(mood_df['Song Image'].values[5+i], use_column_width=True)
                             st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[5 + i]} <br>
                                         <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[5 + i])} <br>
                                         <a href = {mood_df['Spotify Link'].values[5 + i]}>
@@ -359,7 +354,7 @@ with st.container():
                     cols = st.columns(5)
                     for i in range(0, 5):
                         with cols[i]:
-                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
+                            st.image(mood_df['Song Image'].values[10+i], use_column_width=True)
                             st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[10 + i]} <br>
                                         <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[10 + i])} <br>
                                         <a href = {mood_df['Spotify Link'].values[10 + i]}>
@@ -370,7 +365,7 @@ with st.container():
                     cols = st.columns(5)
                     for i in range(0, 5):
                         with cols[i]:
-                            st.image(mood_df['Song Image'].values[i], use_column_width=True)
+                            st.image(mood_df['Song Image'].values[15+i], use_column_width=True)
                             st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[15 + i]} <br>
                                         <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[15 + i])} <br>
                                         <a href = {mood_df['Spotify Link'].values[15 + i]}>
@@ -386,7 +381,6 @@ footer = """<style>
 position: fixed;
 left: 0;
 bottom: 0;
-top: 5px;
 width: 100%;
 background-color: #000000;
 color: black;

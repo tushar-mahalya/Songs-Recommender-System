@@ -53,16 +53,16 @@ class DataPreprocessing:
             songs_data.to_csv('artifacts/[Songs]_Preprocessed_Data.csv', index=False)
             feats_data.to_csv('artifacts/[Features]_Preprocessed_Data.csv', index=False)
             
+            ohe_artist = OHE_List_w_Feats(songs_data, 'Artist', audio_feats=False)
+            ohe_genre = OHE_List_w_Feats(songs_data, 'Genre')
+            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
+            ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
+            
             artists_profile, genres_profile = getAnnualHitQualityProfile(songs_data)
             artists_and_genres = {'Artist': artists_profile, 'Genre': genres_profile}
             with open('artifacts/Artists_&_Genres_Hit_Profile.json', 'w') as file:
                 json.dump(artists_and_genres, file)
                 file.close()
-
-            ohe_artist = OHE_List_w_Feats(songs_data, 'Artist', audio_feats=False)
-            ohe_genre = OHE_List_w_Feats(songs_data, 'Genre')
-            ohe_artist_genre = pd.concat([ohe_artist, ohe_genre], axis=1)
-            ohe_artist_genre.to_csv('artifacts/[OHE]_Artist_Genre.csv', index=False)
 
             logging.info('Preprocessed Data and Features Data is stored in /artifacts directory.')
             return songs_data, feats_data

@@ -1,0 +1,12 @@
+pandas
+numpy
+requests
+beautifulsoup4
+setuptools
+spotipy
+textblob
+scikit-learn
+streamlit
+matplotlib
+scipy
+mplsoccer

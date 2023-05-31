@@ -4,9 +4,110 @@ import pandas as pd
 import json
 import requests
 import streamlit as st
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+from mplsoccer import PyPizza, FontManager
 import streamlit.components.v1 as components
-from src.plotUtils import getFeaturePercentiles, plotPizza, plotHitProfile
+from src.plotUtils import getFeaturePercentiles
 from src.plotUtils import format_song_name, format_artist_name, getMoodPlaylist
+
+spotifyGreen = '#1dda63'
+bg_color_cas = "#000000"
+grey = "#979797"
+lightgrey = "#bdbdbd"
+
+robotoBold = FontManager('https://tushar-mahalya.github.io/images-repo/Fonts/GothamBold.ttf')
+robotoMed = FontManager('https://tushar-mahalya.github.io/images-repo/Fonts/GothamMedium.ttf')
+
+
+
+def plotPizza(values):
+    featColumns = ['Popularity', 'Acousticness', 'Danceability', 'Energy', 'Instrumentalness', 'Loudness',
+                   'Speechiness', 'Tempo', 'Valence']
+    slice_colors = [spotifyGreen] * 9
+    text_colors = ["w"] * 9
+
+    # Instantiate PyPizza class
+    baker = PyPizza(
+        params=featColumns,
+        background_color='#000000',
+        straight_line_color=grey,
+        straight_line_lw=2,
+        straight_line_ls='-',
+        last_circle_color=grey,
+        last_circle_lw=7,
+        last_circle_ls='-',
+        other_circle_lw=2,
+        other_circle_color=lightgrey,
+        other_circle_ls='--',
+        inner_circle_size=20
+    )
+
+    # Plot pizza
+    fig, ax = baker.make_pizza(
+        values,
+        figsize=(8, 8),
+        color_blank_space=["k"] * 9,
+        slice_colors=slice_colors,
+        value_bck_colors=slice_colors,
+        param_location=115,
+        blank_alpha=1,
+        kwargs_slices=dict(edgecolor="w", zorder=2, linewidth=2, alpha=.8, linestyle='-'),
+        kwargs_params=dict(color="w", fontsize=22, fontweight='bold',
+                           va="center", fontproperties=robotoMed.prop),
+        kwargs_values=dict(color="k", fontsize=18, va='center',
+                           zorder=3, fontproperties=robotoMed.prop,
+                           bbox=dict(edgecolor="k", boxstyle="round,pad=0.2", lw=1.5))
+    )
+
+    ax.patch.set_facecolor('None')
+    fig.set_alpha = 0.0
+    fig.patch.set_visible(False)
+
+    return fig
+
+def plotHitProfile(feat_dict):
+    mpl.rc('axes', edgecolor=grey)
+    mpl.rc('axes', linewidth='2')
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Adding bg color and setting the grid
+    fig.set_facecolor(bg_color_cas)
+    ax.set_facecolor('k')
+    ax.set_axisbelow(True)
+    ax.grid(color=lightgrey, which='major', linestyle='--', alpha=1)
+
+    years = list(map(int, list(feat_dict.keys())))
+    hit_quality = list(map(float, list(feat_dict.values())))
+
+    # Plotting
+    ax.plot(years, hit_quality, '-', color=spotifyGreen, lw=4)
+
+    # Setting the limits for x and y axes
+    minYear = int(list(year for year in feat_dict if feat_dict[year] > 0)[0])
+    maxYear = max(years) + 1  # Add a buffer of 1 to the maximum year
+    ax.set_xlim([minYear, maxYear])
+
+    # Setting the x-axis ticks
+    num_ticks = 10  # Number of ticks on the x-axis
+    tick_step = (maxYear - minYear) / (num_ticks - 1)  # Calculate the tick step
+    x_ticks = [int(minYear + i * tick_step) for i in range(num_ticks)]  # Generate the ticks
+    ax.set_xticks(x_ticks)
+
+    ax.set_xlabel('Year', fontsize=16, labelpad=10, fontproperties=robotoMed.prop, color='w')
+    ax.set_ylabel('Hit Quality', fontsize=16, labelpad=10, fontproperties=robotoMed.prop, color='w')
+    # Customizing the x and y ticklabels
+    for ticklabel in ax.get_yticklabels():
+        ticklabel.set_fontproperties(robotoMed.prop)
+        ticklabel.set_fontsize(14)
+    for ticklabel in ax.get_xticklabels():
+        ticklabel.set_fontproperties(robotoMed.prop)
+        ticklabel.set_fontsize(14)
+    ax.tick_params(axis='both', which='major', labelcolor='w', length=0, color='#2b2b2b')
+
+    return fig
 
 st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
 # --- LOADING REQUIRED DATAFRAMES ---
@@ -58,11 +159,17 @@ spotify_logo = "https://www.freepnglogos.com/uploads/spotify-logo-png/file-spoti
 
 
 # Removing whitespace from the top of the page
+
 st.markdown("""
-<style>
-.css-18e3th9 { padding-bottom: 10rem; padding-left: 5rem; padding-right: 5rem; }
-.css-1d391kg { padding-right: 1rem; padding-bottom: 3.5rem; padding-left: 1rem; }
-</style>""", unsafe_allow_html=True)
+        <style>
+               .block-container {
+                    padding-top: 1rem;
+                    padding-bottom: 0rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
 # Button config
 m = st.markdown("""
@@ -79,7 +186,7 @@ div.stButton > button:hover {
 
 # Select widget config
 s_box = st.markdown("""
-<style> div[data-baseweb="select"] > div {background-color: #ffffff;}
+<style> div[data-baseweb="select"] > div {background-color: #000000; color:#ffffff;}
 </style>""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------------------------- #
@@ -355,6 +462,50 @@ with st.container():
                                         <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
                                         </p>""",
                                         unsafe_allow_html=True)
+                            
+
+                            
+st.header(":mailbox: Get In Touch With Me!")
+
+
+contact_form = """
+<form action="https://formsubmit.co/tusharmahalya@gmail.com" method="POST">
+     <input type="hidden" name="_captcha" value="false">
+     <input type="text" name="name" placeholder="Your name" required>
+     <input type="email" name="email" placeholder="Your email" required>
+     <textarea name="message" placeholder="Your message here"></textarea>
+     <button type="submit">Send</button>
+</form>
+"""
+
+st.markdown(contact_form, unsafe_allow_html=True)
+
+                            st.markdown(f"""<style>
+                                                   input[type=text], input[type=email], textarea {
+width: 100%; /* Full width */
+padding: 12px; /* Some padding */ 
+border: 1px solid #ccc; /* Gray border */
+border-radius: 4px; /* Rounded borders */
+box-sizing: border-box; /* Make sure that padding and width stays in place */
+margin-top: 6px; /* Add a top margin */
+margin-bottom: 16px; /* Bottom margin */
+resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+}
+
+                                        /* Style the submit button with a specific background color etc */
+                                        button[type=submit] {
+background-color: #04AA6D;
+color: white;
+padding: 12px 20px;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+                                        /* When moving the mouse over the submit button, add a darker green color */
+                                        button[type=submit]:hover {
+background-color: #45a049;
+}</style>""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------------------------- #    
 

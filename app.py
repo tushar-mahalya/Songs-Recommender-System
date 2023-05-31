@@ -21,7 +21,6 @@ robotoBold = FontManager('https://tushar-mahalya.github.io/images-repo/Fonts/Got
 robotoMed = FontManager('https://tushar-mahalya.github.io/images-repo/Fonts/GothamMedium.ttf')
 
 
-
 def plotPizza(values):
     featColumns = ['Popularity', 'Acousticness', 'Danceability', 'Energy', 'Instrumentalness', 'Loudness',
                    'Speechiness', 'Tempo', 'Valence']
@@ -67,6 +66,7 @@ def plotPizza(values):
 
     return fig
 
+
 def plotHitProfile(feat_dict):
     mpl.rc('axes', edgecolor=grey)
     mpl.rc('axes', linewidth='2')
@@ -109,20 +109,28 @@ def plotHitProfile(feat_dict):
 
     return fig
 
+
 st.set_page_config(page_title="Music Recommender System", page_icon=":notes:", layout="wide")
+
+
 # --- LOADING REQUIRED DATAFRAMES ---
 @st.cache_data
 def load_csv(csv_file_path):
     df = pd.read_csv(csv_file_path)
     return df
+
+
 @st.cache_data
 def load_json(json_file_path):
     with open(json_file_path, "r") as file:
         dict_file = json.load(file)
     return dict_file
+
+
 @st.cache_data
 def upload_data(df, name):
-    df.to_csv(f'artifacts/{name}.csv', index= False)
+    df.to_csv(f'artifacts/{name}.csv', index=False)
+
 
 main_data_path = "artifacts/[Songs]_Preprocessed_Data.csv"
 ohe_data_path = 'artifacts/[OHE]_Artist_Genre.csv'
@@ -155,7 +163,6 @@ spotify_logo = "https://www.freepnglogos.com/uploads/spotify-logo-png/file-spoti
 # ---------------------------------------------------------------------------------------------- #
 
 # --- PAGE CONFIGURATION ---
-
 
 
 # Removing whitespace from the top of the page
@@ -224,7 +231,6 @@ with st.container():
 user_df = None
 
 with st.container():
-
     st.title("Pick your favourite songs  :musical_note:")
     st.subheader("Search for the song's title")
     user_songs = st.multiselect(label="Search", options=df["Song-Artist"],
@@ -238,7 +244,6 @@ with st.container():
             user_df = df[df["Song-Artist"].isin(user_songs)]
             recs_df = rec_sys.Recommend_Songs(user_songs)
             upload_data(recs_df, 'recommendations')
-
 
             st.subheader("Below are the profiles of your chosen songs, using which we'll analyse your preferences..")
 
@@ -455,18 +460,15 @@ with st.container():
                     cols = st.columns(5)
                     for i in range(0, 5):
                         with cols[i]:
-                            st.image(mood_df['Song Image'].values[5+i], use_column_width=True)
+                            st.image(mood_df['Song Image'].values[5 + i], use_column_width=True)
                             st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[5 + i]} <br>
                                         <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[5 + i])} <br>
                                         <a href = {mood_df['Spotify Link'].values[5 + i]}>
                                         <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
                                         </p>""",
                                         unsafe_allow_html=True)
-                            
 
-                            
 st.header(":mailbox: Get In Touch With Me!")
-
 
 contact_form = """
 <form action="https://formsubmit.co/tusharmahalya@gmail.com" method="POST">
@@ -480,32 +482,30 @@ contact_form = """
 
 st.markdown(contact_form, unsafe_allow_html=True)
 
-                            st.markdown(f"""<style>
-                                                   input[type=text], input[type=email], textarea {
-width: 100%; /* Full width */
-padding: 12px; /* Some padding */ 
-border: 1px solid #ccc; /* Gray border */
-border-radius: 4px; /* Rounded borders */
-box-sizing: border-box; /* Make sure that padding and width stays in place */
-margin-top: 6px; /* Add a top margin */
-margin-bottom: 16px; /* Bottom margin */
-resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+st.markdown(f"""<style>
+input[type=text], input[type=email], textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  resize: vertical 
 }
 
-                                        /* Style the submit button with a specific background color etc */
-                                        button[type=submit] {
-background-color: #04AA6D;
-color: white;
-padding: 12px 20px;
-border: none;
-border-radius: 4px;
-cursor: pointer;
+button[type=submit] {
+  background-color: #04AA6D;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
-
-                                        /* When moving the mouse over the submit button, add a darker green color */
-                                        button[type=submit]:hover {
-background-color: #45a049;
-}</style>""", unsafe_allow_html=True)
+button[type=submit]:hover {
+  background-color: #45a049;
+}
+</style>""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------------------------- #    
 

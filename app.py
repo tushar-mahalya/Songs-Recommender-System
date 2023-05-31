@@ -79,7 +79,7 @@ div.stButton > button:hover {
 
 # Select widget config
 s_box = st.markdown("""
-<style> div[data-baseweb="select"] > div {background-color: #000000; color:#ffffff;}
+<style> div[data-baseweb="select"] > div {background-color: #ffffff;}
 </style>""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------------------------- #

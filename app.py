@@ -58,7 +58,11 @@ spotify_logo = "https://www.freepnglogos.com/uploads/spotify-logo-png/file-spoti
 
 
 # Removing whitespace from the top of the page
-
+st.markdown("""
+<style>
+.css-18e3th9 { padding-bottom: 10rem; padding-left: 5rem; padding-right: 5rem; }
+.css-1d391kg { padding-right: 1rem; padding-bottom: 3.5rem; padding-left: 1rem; }
+</style>""", unsafe_allow_html=True)
 
 # Button config
 m = st.markdown("""
@@ -75,7 +79,7 @@ div.stButton > button:hover {
 
 # Select widget config
 s_box = st.markdown("""
-<style> div[data-baseweb="select"] > div {background-color: #ffffff; color:#000000;}
+<style> div[data-baseweb="select"] > div {background-color: #000000; color:#ffffff;}
 </style>""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------------------------- #
@@ -87,6 +91,7 @@ page_bg = """
 <style>
 [data-testid="stAppViewContainer"]{
 background-color: #000000;
+color: #ffffff;
 background-repeat: no-repeat;
 background-position: left;
 }
@@ -350,28 +355,6 @@ with st.container():
                                         <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
                                         </p>""",
                                         unsafe_allow_html=True)
-                with st.container():
-                    cols = st.columns(5)
-                    for i in range(0, 5):
-                        with cols[i]:
-                            st.image(mood_df['Song Image'].values[10+i], use_column_width=True)
-                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[10 + i]} <br>
-                                        <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[10 + i])} <br>
-                                        <a href = {mood_df['Spotify Link'].values[10 + i]}>
-                                        <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
-                                        </p>""",
-                                        unsafe_allow_html=True)
-                with st.container():
-                    cols = st.columns(5)
-                    for i in range(0, 5):
-                        with cols[i]:
-                            st.image(mood_df['Song Image'].values[15+i], use_column_width=True)
-                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {mood_df['Song'].values[15 + i]} <br>
-                                        <b> Artist: </b> {format_artist_name(mood_df['Artist Names'].values[15 + i])} <br>
-                                        <a href = {mood_df['Spotify Link'].values[15 + i]}>
-                                        <img alt="Spotify" src = {spotify_logo} width=30 height=30><b>Listen on Spotify</b></a>
-                                        </p>""",
-                                        unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------------------------- #    
 
@@ -388,7 +371,7 @@ text-align: center;
 }
 </style>
 <div class="footer">
-<p>Developed with ❤ by Tushar Sharma</p>
+<font color = 'white'>Developed with ❤ by Tushar Sharma</font>
 </div>
 """
 st.markdown(footer, unsafe_allow_html=True)

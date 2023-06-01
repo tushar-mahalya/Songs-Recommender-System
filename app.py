@@ -7,7 +7,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mplsoccer import PyPizza, FontManager
 import streamlit.components.v1 as components
-from src.plotUtils import getFeaturePercentiles, getMoodPlaylist
+from src.plotUtils import getFeaturePercentiles
 from src.plotUtils import format_song_name, format_artist_name
 
 # ---------------------------------------------------------------------------------------------- #
@@ -110,6 +110,27 @@ def plotHitProfile(feat_dict):
 
     return fig
 
+
+def getMoodPlaylist(recc_df, chosen_mood):
+    if chosen_mood == "Trending songs":
+        rec_songs_idx = list(recc_df.sort_values(by='Popularity', ascending=False).index)[0:20]
+
+    elif chosen_mood == "Dance party":
+        rec_songs_idx = list(recc_df.sort_values(by='Danceability', ascending=False).index)[0:20]
+
+    elif chosen_mood == "Monday Blues":
+        rec_songs_idx = list(recc_df.sort_values(by='Valence', ascending=True).index)[0:20]
+
+    elif chosen_mood == "Energizing":
+        rec_songs_idx = list(recc_df.sort_values(by='Energy', ascending=False).index)[0:20]
+
+    elif chosen_mood == "Positive vibes":
+        rec_songs_idx = list(recc_df.sort_values(by='Valence', ascending=False).index)[0:20]
+
+    mood_df = recc_df.iloc[rec_songs_idx]
+
+    return mood_df
+
 # ---------------------------------------------------------------------------------------------- #
 # --- PAGE CONFIGURATION ---
 
@@ -130,8 +151,6 @@ def load_json(json_file_path):
         dict_file = json.load(file)
     return dict_file
 
-
-@st.cache_data
 def upload_data(df, name):
     df.to_csv(f'artifacts/{name}.csv', index=False)
 
@@ -494,7 +513,7 @@ with st.container():
 
                     # Playlist display
             if chosen_mood != None:
-                recs_df = load_csv('artifacts/recommendations.csv')
+                recs_df = pd.read_csv('artifacts/recommendations.csv')
 
                 mood_df = getMoodPlaylist(recs_df, chosen_mood)
 

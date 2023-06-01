@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from mplsoccer import PyPizza, FontManager
 import streamlit.components.v1 as components
-from src.plotUtils import getFeaturePercentiles
-from src.plotUtils import format_song_name, format_artist_name, getMoodPlaylist
+from src.plotUtils import getFeaturePercentiles, getMoodPlaylist
+from src.plotUtils import format_song_name, format_artist_name
 
 spotifyGreen = '#1dda63'
 bg_color_cas = "#000000"
@@ -160,6 +160,7 @@ astro_animation_html = """
 
 # images
 spotify_logo = "https://www.freepnglogos.com/uploads/spotify-logo-png/file-spotify-logo-png-4.png"
+casette = 'https://www.scdn.co/i/500/cassette.svg'
 # ---------------------------------------------------------------------------------------------- #
 
 # --- PAGE CONFIGURATION ---
@@ -200,6 +201,15 @@ s_box = st.markdown("""
 
 # --- WEBPAGE CODE ---
 
+# --- GITHUB CORNER WIDGET ---
+
+st.markdown("""
+<a href="https://github.com/tushar-mahalya/Songs-Recommender-System" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#fff; color:#151513; position: absolute; top: -20; border: 0; right: -80;" aria-hidden="false"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------------------------------- #
+
 # Setting background
 page_bg = """
 <style>
@@ -237,26 +247,53 @@ with st.container():
                                 label_visibility='collapsed')
     if st.button("Confirm Selection"):
 
-        if len(user_songs) < 5 or len(user_songs) > 5:
-            st.error("Please select only 5 songs", icon="⚠️")
+        if len(user_songs) < 5 or len(user_songs) > 10:
+            st.error("Please select only 5-10 songs", icon="⚠️")
 
         else:
             user_df = df[df["Song-Artist"].isin(user_songs)]
             recs_df = rec_sys.Recommend_Songs(user_songs)
             upload_data(recs_df, 'recommendations')
+            user_df_len = user_df.shape[0]
+            extra = user_df_len - 5
 
             st.subheader("Below are the profiles of your chosen songs, using which we'll analyse your preferences..")
-
-            cols = st.columns(5)
-            for i in range(0, 5):
-                with cols[i]:
-                    st.pyplot(plotPizza(getFeaturePercentiles(df, user_df['Song-Artist'].values[i], 'song')))
-                    st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(user_df['Song'].values[i])} <br>
-                                <b> Artist: </b> {format_artist_name(user_df['Artist Names'].values[i])} <br>
-                                <a href = {user_df['Spotify Link'].values[i]}>
-                                <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
-                                </p>""",
-                                unsafe_allow_html=True)
+			
+            if user_df_len > 5:
+                with st.container():
+                    cols = st.columns(5)
+                    for i in range(0, 5):
+                        with cols[i]:
+                            st.pyplot(plotPizza(getFeaturePercentiles(df, user_df['Song-Artist'].values[i], 'song')))
+                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(user_df['Song'].values[i])} <br>
+                                        <b> Artist: </b> {format_artist_name(user_df['Artist Names'].values[i])} <br>
+                                        <a href = {user_df['Spotify Link'].values[i]}>
+                                        <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
+                                        </p>""",
+                                        unsafe_allow_html=True)
+                with st.container():
+                    cols = st.columns(5)
+                    for i in range(0, extra):
+                        with cols[i]:
+                            st.pyplot(plotPizza(getFeaturePercentiles(df, user_df['Song-Artist'].values[i+extra], 'song')))
+                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(user_df['Song'].values[i+extra])} <br>
+                                        <b> Artist: </b> {format_artist_name(user_df['Artist Names'].values[i+extra])} <br>
+                                        <a href = {user_df['Spotify Link'].values[i+extra]}>
+                                        <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
+                                        </p>""",
+                                        unsafe_allow_html=True)
+            else:
+                with st.container():
+                    cols = st.columns(5)
+                    for i in range(0, 5):
+                        with cols[i]:
+                            st.pyplot(plotPizza(getFeaturePercentiles(df, user_df['Song-Artist'].values[i], 'song')))
+                            st.markdown(f"""<p align = 'center'> <b> Song: </b> {format_song_name(user_df['Song'].values[i])} <br>
+                                        <b> Artist: </b> {format_artist_name(user_df['Artist Names'].values[i])} <br>
+                                        <a href = {user_df['Spotify Link'].values[i]}>
+                                        <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
+                                        </p>""",
+                                        unsafe_allow_html=True)
 
             st.write("<br>", unsafe_allow_html=True)
 
@@ -269,10 +306,10 @@ with st.container():
                         st.image(recs_df['Song Image'].values[i], use_column_width=True)
                         st.markdown(
                             f"""<p align = 'center'> <b> Song: </b> {format_song_name(recs_df['Song'].values[i])} <br>
-                                <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[i])} <br>
-                                <a href = {recs_df['Spotify Link'].values[i]}>
-                                <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
-                                </p>""",
+                                    <b> Artist: </b> {format_artist_name(recs_df['Artist Names'].values[i])} <br>
+                                    <a href = {recs_df['Spotify Link'].values[i]}>
+                                    <img alt="Spotify" src = {spotify_logo} width=15 height=15 margin-right = 5px><b>Listen on Spotify</b></a>
+                                    </p>""",
                             unsafe_allow_html=True)
             with st.container():
                 cols = st.columns(5)
@@ -319,7 +356,8 @@ with st.container():
                         "<p style = 'font-size: 36px; font-weight: bold;'> <br> Sit back and stream or ..</p>""",
                         unsafe_allow_html=True)
 
-# --- ARTIST AND GENRE PROFILES ---        
+# --- ARTIST AND GENRE PROFILES ---
+st.markdown("""---""")
 
 st.title("Explore more")
 line1 = """<p style = "font-size: 22px;"> 
@@ -468,23 +506,44 @@ with st.container():
                                         </p>""",
                                         unsafe_allow_html=True)
 
-st.header(":mailbox: Get In Touch With Me!")
+                            
+st.markdown("""---""")
 
 contact_form = """
 <form action="https://formsubmit.co/tusharmahalya@gmail.com" method="POST">
      <input type="hidden" name="_captcha" value="false">
      <input type="text" name="name" placeholder="Your name" required>
      <input type="email" name="email" placeholder="Your email" required>
-     <textarea name="message" placeholder="Your message here"></textarea>
+     <textarea name="message" placeholder="Your message here"></textarea><br>
      <button type="submit">Send</button>
 </form>
 """
 
-st.markdown(contact_form, unsafe_allow_html=True)
 
-st.markdown(f"""<style>
-input[type=text], input[type=email], textarea {
-  width: 100%;
+
+with st.container():
+    left_col, right_col = st.columns([6, 4])
+    with left_col:
+        st.header(":mailbox: Get In Touch With Me!")
+        st.markdown("""<p style = 'font-size: 20px;'>Social Links : <a href='https://www.linkedin.com/in/tushar-5harma/' target='_blank'><img width="48" height="48" src="https://img.icons8.com/color/48/linkedin.png" alt="linkedin"/></a>
+        <a target='_blank' href='https://github.com/tushar-mahalya/'><img width="48" height="48" src="https://img.icons8.com/sf-regular-filled/48/FFFFFF/github.png" alt="github"/></a>
+        <a target='_blank' href='mailto:tusharmahalya@gmail.com'><img width="48" height="48" src="https://img.icons8.com/fluency/48/gmail.png" alt="gmail"/></a>
+        <a target='_blank' href='https://wa.me/+917652064884'><img width="48" height="48" src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="whatsapp--v1"/></a></p>
+        """, unsafe_allow_html=True)
+        st.markdown(contact_form, unsafe_allow_html=True)
+        
+    with right_col:
+        st.image(casette, use_column_width = True)
+        st.markdown("""<p align='right' style = 'font-size: 20px;'>Thanks For Visiting ! </p>""", unsafe_allow_html=True)
+
+#st.markdown(contact_form, unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+input[type=text],
+input[type=email],
+textarea {
+  width: 80%;
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -495,7 +554,7 @@ input[type=text], input[type=email], textarea {
 }
 
 button[type=submit] {
-  background-color: #04AA6D;
+  background-color: #1DDA63;
   color: white;
   padding: 12px 20px;
   border: none;
@@ -503,7 +562,8 @@ button[type=submit] {
   cursor: pointer;
 }
 button[type=submit]:hover {
-  background-color: #45a049;
+  background-color: #ffffff
+  color: black;
 }
 </style>""", unsafe_allow_html=True)
 

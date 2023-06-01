@@ -7,7 +7,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mplsoccer import PyPizza, FontManager
 import streamlit.components.v1 as components
-from src.plotUtils import getFeaturePercentiles
+from src.plotUtils import getFeaturePercentiles, getMoodPlaylist
 from src.plotUtils import format_song_name, format_artist_name
 
 # ---------------------------------------------------------------------------------------------- #
@@ -110,27 +110,6 @@ def plotHitProfile(feat_dict):
 
     return fig
 
-
-def getMoodPlaylist(recc_df, chosen_mood):
-    if chosen_mood == "Trending songs":
-        rec_songs_idx = list(recc_df.sort_values(by='Popularity', ascending=False).index)[0:20]
-
-    elif chosen_mood == "Dance party":
-        rec_songs_idx = list(recc_df.sort_values(by='Danceability', ascending=False).index)[0:20]
-
-    elif chosen_mood == "Monday Blues":
-        rec_songs_idx = list(recc_df.sort_values(by='Valence', ascending=True).index)[0:20]
-
-    elif chosen_mood == "Energizing":
-        rec_songs_idx = list(recc_df.sort_values(by='Energy', ascending=False).index)[0:20]
-
-    elif chosen_mood == "Positive vibes":
-        rec_songs_idx = list(recc_df.sort_values(by='Valence', ascending=False).index)[0:20]
-
-    mood_df = recc_df.iloc[rec_songs_idx]
-
-    return mood_df
-
 # ---------------------------------------------------------------------------------------------- #
 # --- PAGE CONFIGURATION ---
 
@@ -189,6 +168,11 @@ casette = 'https://www.scdn.co/i/500/cassette.svg'
 
 # ---------------------------------------------------------------------------------------------- #
 # --- WEBPAGE LAYOUT & WIDGET CODE ---
+
+# Removing the Hamberger menu
+hide_menu_style = """<style> #MainMenu {visibility: hidden;} </style>"""
+
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 # Removing whitespace from the top of the page
 st.markdown("""

@@ -169,12 +169,6 @@ casette = 'https://www.scdn.co/i/500/cassette.svg'
 # ---------------------------------------------------------------------------------------------- #
 # --- WEBPAGE LAYOUT & WIDGET CODE ---
 
-# Removing the Hamberger menu
-hide_menu_style = """<style> #MainMenu {visibility: hidden;}
-header {visibility: hidden;}</style>"""
-
-st.markdown(hide_menu_style, unsafe_allow_html=True)
-
 # Removing whitespace from the top of the page
 st.markdown("""
 <style>

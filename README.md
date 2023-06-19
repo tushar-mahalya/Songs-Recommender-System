@@ -43,14 +43,14 @@ To ensure widespread accessibility, we deploy our song recommender system on Str
 
 ## Features
 * ### Recommender Engine
-![ Alt text](resources/Gifs/recommendations.gif)
+![Recommneder Engine Demo video](resources/Gifs/recommendations.gif)
 * ### Analytical Engine
     1. For Genre
-    ![ Alt text](resources/Gifs/genre_profile.gif)
+    ![Analytical Engine demo for genre](resources/Gifs/genre_profile.gif)
     2. For Artist
-    ![ Alt text](resources/Gifs/artist_profile.gif)
+    ![Analytical Engine demo for Artist](resources/Gifs/artist_profile.gif)
 * ### Themed Playlists
-![ Alt text](resources/Gifs/playlist.gif)
+![Playlisting Demo video](resources/Gifs/playlist.gif)
 
 ## Hardware Specification
 

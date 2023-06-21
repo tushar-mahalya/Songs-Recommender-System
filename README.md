@@ -44,13 +44,32 @@ To ensure widespread accessibility, we deploy our song recommender system on Str
 ## Features
 * ### Recommender Engine
 ![Recommneder Engine Demo video](resources/Gifs/recommendations.gif)
+Our application utilizes a comprehensive algorithm to provide users with tailored music recommendations based on their selected 5-10 songs. By analyzing the audio features, key, time signature, subjectivity, and polarity of the song titles (measured using TextBlob), as well as the genre of the artist, we generate a list of 20 songs that closely align with the user's preferences. To further enhance the user experience, we present a PizzaPlot visualization, showcasing the distribution of audio features of the selected songs. This visual representation helps users understand the characteristics of their chosen songs and how they relate to the recommended tracks. To ensure a seamless listening experience, each recommended song is accompanied by a Spotify link, allowing users to effortlessly explore and enjoy the suggested music.  
 * ### Analytical Engine
-    1. For Genre
-    ![Analytical Engine demo for genre](resources/Gifs/genre_profile.gif)
-    2. For Artist
-    ![Analytical Engine demo for Artist](resources/Gifs/artist_profile.gif)
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+  <div style="text-align: center;">
+    <p>Artist Profile</p>
+    <img src="resources/Gifs/artist_profile.gif" alt="Analytical Engine demo for Artist" width="400" />
+  </div>
+  <div style="text-align: center;">
+    <p>Genre Profile</p>
+    <img src="resources/Gifs/genre_profile.gif" alt="Analytical Engine demo for Genre" width="400" />
+  </div>
+</div>
+
 * ### Themed Playlists
 ![Playlisting Demo video](resources/Gifs/playlist.gif)
+In addition to the personalized song recommendations, our application goes a step further by curating five themed playlists based on the user's mood. Each playlist is meticulously crafted to cater to the user's preferences, leveraging the characteristics of their selected songs. These playlists exhibit specific audio features that are dominant within them, ensuring a cohesive and immersive musical experience. Let's delve into the details of each playlist:
+
+    1. <u>Trending Songs</u> : By prioritizing the 'popularity' factor, we ensure that users stay up-to-date with the latest music trends and discover the hottest hits in real-time.
+
+    2. <u>Dance Party</u> : Designed for those looking to groove and let loose, this playlist emphasizes the highest 'Danceability' factor.
+
+    3. <u>Monday Blues</u> : Intended to counteract the notorious Monday blues, this playlist is curated with songs that possess the lowest 'Valence' factor.
+
+    4. <u>Energizing</u> : Perfect for workouts or moments when an extra boost of energy is needed, this playlist highlights songs with the highest 'Energy' factor.
+
+    5. <u>Positive Vibes</u> : For those seeking an uplifting and optimistic musical experience, this playlist focuses on songs with the highest 'Valence' factor.
 
 ## Hardware Specification
 

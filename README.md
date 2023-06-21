@@ -49,11 +49,11 @@ Our application utilizes a comprehensive algorithm to provide users with tailore
     <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
   <div style="text-align: center;">
     <p>Artist Profile</p>
-    <img src="resources/Gifs/artist_profile.gif" alt="Analytical Engine demo for Artist" width="400" />
+    <img src="resources/Gifs/artist_profile.gif" alt="Analytical Engine demo for Artist" />
   </div>
   <div style="text-align: center;">
     <p>Genre Profile</p>
-    <img src="resources/Gifs/genre_profile.gif" alt="Analytical Engine demo for Genre" width="400" />
+    <img src="resources/Gifs/genre_profile.gif" alt="Analytical Engine demo for Genre" />
   </div>
 </div>
 

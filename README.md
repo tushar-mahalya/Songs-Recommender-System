@@ -44,6 +44,7 @@ To ensure widespread accessibility, we deploy our song recommender system on Str
 ## Features
 * ### Recommender Engine
 ![Recommneder Engine Demo video](resources/Gifs/recommendations.gif)
+
 Our application utilizes a comprehensive algorithm to provide users with tailored music recommendations based on their selected 5-10 songs. By analyzing the audio features, key, time signature, subjectivity, and polarity of the song titles (measured using TextBlob), as well as the genre of the artist, we generate a list of 20 songs that closely align with the user's preferences. To further enhance the user experience, we present a PizzaPlot visualization, showcasing the distribution of audio features of the selected songs. This visual representation helps users understand the characteristics of their chosen songs and how they relate to the recommended tracks. To ensure a seamless listening experience, each recommended song is accompanied by a Spotify link, allowing users to effortlessly explore and enjoy the suggested music.  
 * ### Analytical Engine
  <div style="display: flex; justify-content: center;">
@@ -60,6 +61,7 @@ Our application utilizes a comprehensive algorithm to provide users with tailore
 
 * ### Themed Playlists
 ![Playlisting Demo video](resources/Gifs/themed_playlist.gif)
+
 In addition to the personalized song recommendations, our application goes a step further by curating five themed playlists based on the user's mood. Each playlist is meticulously crafted to cater to the user's preferences, leveraging the characteristics of their selected songs. These playlists exhibit specific audio features that are dominant within them, ensuring a cohesive and immersive musical experience. Let's delve into the details of each playlist:
 
   1. <u>Trending Songs</u> : By prioritizing the 'popularity' factor, we ensure that users stay up-to-date with the latest music trends and discover the hottest hits in real-time.

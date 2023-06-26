@@ -59,7 +59,7 @@ Our application utilizes a comprehensive algorithm to provide users with tailore
 
 
 * ### Themed Playlists
-![Playlisting Demo video](resources/Gifs/playlist.gif)
+![Playlisting Demo video](resources/Gifs/themed_playlist.gif)
 In addition to the personalized song recommendations, our application goes a step further by curating five themed playlists based on the user's mood. Each playlist is meticulously crafted to cater to the user's preferences, leveraging the characteristics of their selected songs. These playlists exhibit specific audio features that are dominant within them, ensuring a cohesive and immersive musical experience. Let's delve into the details of each playlist:
 
   1. <u>Trending Songs</u> : By prioritizing the 'popularity' factor, we ensure that users stay up-to-date with the latest music trends and discover the hottest hits in real-time.

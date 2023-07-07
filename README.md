@@ -5,8 +5,20 @@
 
 [![Repo Size](https://img.shields.io/github/repo-size/tushar-mahalya/Songs-Recommender-System?style=flat-square)](https://github.com/tushar-mahalya/Songs-Recommender-System)  ![License](https://img.shields.io/badge/license-MIT-red.svg)  ![Project Status](https://img.shields.io/badge/status-Completed-brightgreen.svg)  [![streamlit-ext-demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://songs-recommendation-system.streamlit.app/)
 
-	
+## Introduction
+We aim to develop a robust system that combines data acquisition, exploratory data analysis, content-based recommendation algorithms, and user interface development to delve into the evolving landscape of music preferences.
 
+* ### Data Acquisition and Processing
+  We employ web scraping techniques and the Spotify API to gather metadata, audio features data, and lyrics of Billboard Hot 100 (BBHOT100) tracks spanning 1946 to 2022. This comprehensive dataset forms the basis of our analysis and recommendation system.
+
+* ### Exploratory Data Analysis
+  Using Tableau, we conduct extensive analysis on the BBHOT100 dataset. By examining trends, patterns, and correlations, we gain insights into the evolution of music preferences and the factors influencing popularity.
+
+* ### Recommendation System & Analytics
+  Our system includes a content-based recommendation system that uses audio feature extraction and sophisticated algorithms to provide personalized song recommendations based on user preferences. Additionally, our advanced analytics engine visualizes audio features, analyzes artist popularity over time, and presents mean percentile rank of artists and genres for user assessment.
+
+* ### UI Development & Deployment
+  We create an intuitive UI resembling Spotify and deploy our song recommender system on Streamlit Cloud for widespread accessibility. Users can seamlessly explore music and discover personalized recommendations on this scalable platform.
 
 ## Getting started
 To use the application, you can visit the live version hosted on the following URL:
@@ -40,21 +52,6 @@ Alternatively, you can run the application on your local machine by following th
 5. Open your web browser and navigate to the following URL:
 
 		http://localhost:8501/
-
-## Introduction
-We aim to develop a robust system that combines data acquisition, exploratory data analysis, content-based recommendation algorithms, and user interface development to delve into the evolving landscape of music preferences.
-
-* ### Data Acquisition and Processing
-  We employ web scraping techniques and the Spotify API to gather metadata, audio features data, and lyrics of Billboard Hot 100 (BBHOT100) tracks spanning 1946 to 2022. This comprehensive dataset forms the basis of our analysis and recommendation system.
-
-* ### Exploratory Data Analysis
-  Using Tableau, we conduct extensive analysis on the BBHOT100 dataset. By examining trends, patterns, and correlations, we gain insights into the evolution of music preferences and the factors influencing popularity.
-
-* ### Recommendation System & Analytics
-  Our system includes a content-based recommendation system that uses audio feature extraction and sophisticated algorithms to provide personalized song recommendations based on user preferences. Additionally, our advanced analytics engine visualizes audio features, analyzes artist popularity over time, and presents mean percentile rank of artists and genres for user assessment.
-
-* ### UI Development & Deployment
-  We create an intuitive UI resembling Spotify and deploy our song recommender system on Streamlit Cloud for widespread accessibility. Users can seamlessly explore music and discover personalized recommendations on this scalable platform.
 
 ## Application Features
 * ### Recommender Engine

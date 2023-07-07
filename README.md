@@ -26,20 +26,19 @@ Alternatively, you can run the application on your local machine by following th
 		http://localhost:8501/
 
 ## Introduction
-In immersive exploration into the evolving landscape of music preferences, our objective is to build a robust system that encompasses a wide range of functionalities, using a combination of data acquisition, exploratory data analysis, content-based recommendation algorithms, and user interface development.
+We aim to develop a robust system that combines data acquisition, exploratory data analysis, content-based recommendation algorithms, and user interface development to delve into the evolving landscape of music preferences.
 
 * ### Data Acquisition and Processing
-To kickstart our project, we leverage web scraping techniques and the Spotify API to gather metadata, audio features data, and lyrics of Billboard Hot 100 (BBHOT100) tracks spanning 77 years, from 1946 to 2022. This meticulous data collection process ensures a comprehensive and rich dataset for our analysis and recommendation system.
+  We employ web scraping techniques and the Spotify API to gather metadata, audio features data, and lyrics of Billboard Hot 100 (BBHOT100) tracks spanning 1946 to 2022. This comprehensive dataset forms the basis of our analysis and recommendation system.
+
 * ### Exploratory Data Analysis
-Harnessing the power of business intelligence tools, specifically Tableau, we conduct extensive exploratory data analysis on the processed BBHOT100 dataset. This analysis aims to derive valuable insights into the evolution of music preferences over time. By examining trends, patterns, and correlations within the data, we uncover the shifting dynamics of musical tastes and understand the factors that influence popularity.
-* ### Content-Based Recommendation System
-Building upon the insights gained from our exploratory analysis, we develop a content-based music recommendation system. By extracting audio features from each song in the dataset, we employ sophisticated algorithms to identify similarities and patterns. This enables us to offer personalized song recommendations to users based on their individual preferences. Our system empowers users to discover new music that aligns with their taste, similar to the acclaimed Spotify recommendation engine.
-* ### Advanced Analytics
-In addition to our recommendation system, we have developed an analytical engine that further enhances the understanding of music and artists. Our engine utilizes PizzaPlot, a specialized visualization tool, to present the audio features of user selected songs in an easily digestible format. We also analyze the popularity of specific artists, providing insights into their reach and influence with respect to time. Furthermore, we visualize the mean percentile rank of artists and genres, allowing users to gauge the relative standing of certain attributes.
-* ### User Interface Development
-Delivering a seamless user experience is paramount to our project. With a focus on user-centric design, we craft an intuitive and visually appealing user interface (UI) that emulates the familiar aesthetics of the Spotify platform. Utilizing Streamlit, a powerful web application framework, we build an interactive frontend that seamlessly integrates with our recommendation system. The result is a user-friendly and engaging interface that facilitates effortless music exploration and discovery.
-* ### Deployment on Streamlit Cloud
-To ensure widespread accessibility, we deploy our song recommender system on Streamlit Cloud. Leveraging the scalability and availability of cloud computing, our system becomes easily accessible to users worldwide via a web browser. This deployment allows music enthusiasts to enjoy personalized recommendations and explore the evolution of music preferences at their convenience.
+  Using Tableau, we conduct extensive analysis on the BBHOT100 dataset. By examining trends, patterns, and correlations, we gain insights into the evolution of music preferences and the factors influencing popularity.
+
+* ### Recommendation System & Analytics
+  Our system includes a content-based recommendation system that uses audio feature extraction and sophisticated algorithms to provide personalized song recommendations based on user preferences. Additionally, our advanced analytics engine visualizes audio features, analyzes artist popularity over time, and presents mean percentile rank of artists and genres for user assessment.
+
+* ### UI Development & Deployment
+  We create an intuitive UI resembling Spotify and deploy our song recommender system on Streamlit Cloud for widespread accessibility. Users can seamlessly explore music and discover personalized recommendations on this scalable platform.
 
 ## Features
 * ### Recommender Engine
@@ -47,17 +46,12 @@ To ensure widespread accessibility, we deploy our song recommender system on Str
 
 Our application utilizes a comprehensive algorithm to provide users with tailored music recommendations based on their selected 5-10 songs. By analyzing the audio features, key, time signature, subjectivity, and polarity of the song titles (measured using TextBlob), as well as the genre of the artist, we generate a list of 20 songs that closely align with the user's preferences. To further enhance the user experience, we present a PizzaPlot visualization, showcasing the distribution of audio features of the selected songs. This visual representation helps users understand the characteristics of their chosen songs and how they relate to the recommended tracks. To ensure a seamless listening experience, each recommended song is accompanied by a Spotify link, allowing users to effortlessly explore and enjoy the suggested music.  
 * ### Analytical Engine
- <div style="display: flex; justify-content: center;">
-  <div style="flex: 1; padding: 10px; text-align: center;">
-    <p>Artist Profile</p>
-    <img src="resources/Gifs/artist_profile.gif" alt="Analytical Engine demo for Artist" style="max-width: 100%; height: auto;" />
-  </div>
-  <div style="flex: 1; padding: 10px; text-align: center;">
-    <p>Genre Profile</p>
-    <img src="resources/Gifs/genre_profile.gif" alt="Analytical Engine demo for Genre" style="max-width: 100%; height: auto;" />
-  </div>
-</div>
+  
+| Artist Profile | Genre Profile |
+| ----------------- | ----------------- |
+| ![Analytical Engine demo for Artist](resources/Gifs/artist_profile.gif) | ![Analytical Engine demo for Genre](resources/Gifs/genre_profile.gif) |
 
+In addition to our recommendation system, we have developed an analytical engine that further enhances the understanding of music and artists. Our engine utilizes PizzaPlot, a specialized visualization tool, to present the audio features of user selected songs in an easily digestible format. We also analyze the popularity of specific artists, providing insights into their reach and influence with respect to time. Furthermore, we visualize the mean percentile rank of artists and genres, allowing users to gauge the relative standing of certain attributes.
 
 * ### Themed Playlists
 ![Playlisting Demo video](resources/Gifs/themed_playlist.gif)

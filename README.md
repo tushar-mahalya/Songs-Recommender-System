@@ -13,15 +13,25 @@ Alternatively, you can run the application on your local machine by following th
 
 		git clone https://github.com/tushar-mahalya/Songs-Recommender-System.git
     
-2. Install the necessary dependencies by running the following command:
+2. Create and activate a virtual environment (optional but recommended):
+   - Using 'venv':
+     
+         python3 -m venv venv
+         source venv/bin/activate
+   - Using 'conda':
+     
+         conda create --name rec-system-env
+         conda activate rec-system-env
+     
+3. Install the necessary dependencies by running the following command:
 
 		pip install -r requirements.txt
 
-3. Start the Streamlit application by running the following command:
+4. Start the Streamlit application by running the following command:
 
 		streamlit run app.py
     
-4. Open your web browser and navigate to the following URL:
+5. Open your web browser and navigate to the following URL:
 
 		http://localhost:8501/
 
@@ -40,7 +50,7 @@ We aim to develop a robust system that combines data acquisition, exploratory da
 * ### UI Development & Deployment
   We create an intuitive UI resembling Spotify and deploy our song recommender system on Streamlit Cloud for widespread accessibility. Users can seamlessly explore music and discover personalized recommendations on this scalable platform.
 
-## Features
+## Application Features
 * ### Recommender Engine
 ![Recommneder Engine Demo video](resources/Gifs/recommendations.gif)
 
@@ -58,15 +68,18 @@ In addition to our recommendation system, we have developed an analytical engine
 
 In addition to the personalized song recommendations, our application goes a step further by curating five themed playlists based on the user's mood. Each playlist is meticulously crafted to cater to the user's preferences, leveraging the characteristics of their selected songs. These playlists exhibit specific audio features that are dominant within them, ensuring a cohesive and immersive musical experience. Let's delve into the details of each playlist:
 
-  1. <u>Trending Songs</u> : By prioritizing the 'popularity' factor, we ensure that users stay up-to-date with the latest music trends and discover the hottest hits in real-time.
+  1. <b>Trending Songs</b> : By prioritizing the 'popularity' factor, we ensure that users stay up-to-date with the latest music trends and discover the hottest hits in real-time.
 
-  2. <u>Dance Party</u> : Designed for those looking to groove and let loose, this playlist emphasizes the highest 'Danceability' factor.
+  2. <b>Dance Party</b> : Designed for those looking to groove and let loose, this playlist emphasizes the highest 'Danceability' factor.
 
-  3. <u>Monday Blues</u> : Intended to counteract the notorious Monday blues, this playlist is curated with songs that possess the lowest 'Valence' factor.
+  3. <b>Monday Blues</b> : Intended to counteract the notorious Monday blues, this playlist is curated with songs that possess the lowest 'Valence' factor.
 
-  4. <u>Energizing</u> : Perfect for workouts or moments when an extra boost of energy is needed, this playlist highlights songs with the highest 'Energy' factor.
+  4. <b>Energizing</b> : Perfect for workouts or moments when an extra boost of energy is needed, this playlist highlights songs with the highest 'Energy' factor.
 
-  5. <u>Positive Vibes</u> : For those seeking an uplifting and optimistic musical experience, this playlist focuses on songs with the highest 'Valence' factor.
+  5. <b>Positive Vibes</b> : For those seeking an uplifting and optimistic musical experience, this playlist focuses on songs with the highest 'Valence' factor.
+
+## Pipelines & Workflows
+![Pipelines and workflows](resources/workflow_diagram.png)
 
 ## Hardware Specification
 

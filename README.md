@@ -1,7 +1,7 @@
-# <p align = 'center'>Songs Recommender System
-![Sptify Banner](resources/spotify_banner.png)</p align = "center">
+# <p align = 'center'>Songs Recommender System</p>
 
 [![Repo Size](https://img.shields.io/github/repo-size/tushar-mahalya/Songs-Recommender-System?style=flat-square)](https://github.com/tushar-mahalya/Songs-Recommender-System)  ![License](https://img.shields.io/badge/license-MIT-red.svg)  ![Project Status](https://img.shields.io/badge/status-Completed-brightgreen.svg)  [![streamlit-ext-demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://songs-recommendation-system.streamlit.app/)
+![Sptify Banner](resources/spotify_banner.png)
 
 ## Getting started
 To use the application, you can visit the live version hosted on the following URL:
